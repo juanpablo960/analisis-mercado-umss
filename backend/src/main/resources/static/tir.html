@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Simulación TIR - UMSS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans min-h-screen">
+
+       <nav class="bg-blue-900 text-white p-4 shadow-md relative z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <!-- Logo / Título -->
+            <h1 class="text-xl font-bold">Sistema de Análisis (ARCUSUR)</h1>
+            
+            <!-- Menú de Navegación -->
+            <div class="flex items-center gap-6 text-sm">
+                
+                <!-- Inicio -->
+                <a href="index.html" class="hover:underline flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    <span>Inicio</span>
+                </a>
+
+                <!-- Dropdown Titulados -->
+                <div class="relative group py-2">
+                    <!-- Si estás en una página de Titulados, agrégale la clase bg-blue-700 px-3 py-1 rounded a este button -->
+                    <button class="hover:underline flex items-center gap-1 focus:outline-none">
+                        Titulados ▼
+                    </button>
+                    <div class="absolute left-0 mt-2 w-56 bg-white text-gray-800 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                        <a href="titulados.html" class="block px-4 py-2 hover:bg-gray-100 rounded-t-md">Dashboard</a>
+                        <a href="lista-titulados.html" class="block px-4 py-2 hover:bg-gray-100">Lista de Titulados</a>
+                        <a href="reportes-dinamicos.html" class="block px-4 py-2 hover:bg-gray-100 font-bold text-blue-600">Reportes Dinámicos</a>
+                        <a href="cruce.html" class="block px-4 py-2 hover:bg-gray-100 font-bold text-yellow-600">Cruce de Datos</a>
+                        <a href="monte-carlo.html" class="block px-4 py-2 hover:bg-gray-100 font-bold text-indigo-600">Simulación Monte Carlo</a>
+                        <a href="tir.html" class="block px-4 py-2 hover:bg-gray-100 rounded-b-md font-bold text-green-600">Simulación TIR</a>
+                    </div>
+                </div>
+
+                <!-- Dropdown Empleadores -->
+                <div class="relative group py-2">
+                    <!-- Si estás en una página de Empleadores, agrégale la clase bg-blue-700 px-3 py-1 rounded a este button -->
+                    <button class="hover:underline flex items-center gap-1 focus:outline-none">
+                        Empleadores ▼
+                    </button>
+                    <div class="absolute left-0 mt-2 w-56 bg-white text-gray-800 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                        <a href="empleadores.html" class="block px-4 py-2 hover:bg-gray-100 rounded-t-md">Dashboard</a>
+                        <a href="lista-empleadores.html" class="block px-4 py-2 hover:bg-gray-100">Lista de Empresas</a>
+                        <a href="reportes-empleadores.html" class="block px-4 py-2 hover:bg-gray-100 font-bold text-green-600">Reportes Dinámicos</a>
+                        <a href="cruce-empleadores.html" class="block px-4 py-2 hover:bg-gray-100 rounded-b-md font-bold text-yellow-600">Cruce de Datos</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto p-6 max-w-6xl">
+        <h2 class="text-2xl font-semibold mb-2">Simulación de Inversión - TIR</h2>
+        <p class="text-gray-600 mb-6 text-sm">Análisis de la decisión de estudiar un posgrado mediante el cálculo de la Tasa Interna de Retorno (TIR).</p>
+
+        <!-- Panel de Parámetros -->
+        <div class="bg-white p-4 rounded-lg shadow-md mb-6 border-t-4 border-blue-500">
+            <h3 class="font-bold text-sm text-blue-800 mb-2">Parámetros de la Simulación</h3>
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+                <div>
+                    <label class="text-xs font-bold block mb-1">Simulaciones:</label>
+                    <select id="simulaciones" class="border rounded p-2 text-sm w-full">
+                        <option value="1000">1000</option>
+                        <option value="5000">5000</option>
+                        <option value="10000" selected>10000</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-xs font-bold block mb-1">TREMA (%):</label>
+                    <input type="number" id="trema" class="border rounded p-2 text-sm w-full" value="25" min="1" max="100">
+                </div>
+                <div>
+                    <label class="text-xs font-bold block mb-1">Inversión Base (Bs.):</label>
+                    <input type="number" id="inversion" class="border rounded p-2 text-sm w-full" value="8000" min="0" step="500">
+                </div>
+                <div>
+                    <label class="text-xs font-bold block mb-1">Flujo Anual (Bs.):</label>
+                    <input type="number" id="flujo" class="border rounded p-2 text-sm w-full" value="5000" min="0" step="500">
+                </div>
+                <div>
+                    <button onclick="ejecutarSimulacion()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition text-sm font-bold w-full">
+                        Calcular TIR
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tarjetas de Resultados -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div class="bg-white p-4 rounded-lg shadow text-center border-l-4 border-blue-500">
+                <p class="text-gray-500 text-xs">Simulaciones</p>
+                <p id="resSims" class="text-xl font-bold text-blue-700">--</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow text-center border-l-4 border-cyan-500">
+                <p class="text-gray-500 text-xs">TREMA</p>
+                <p id="resTrema" class="text-xl font-bold text-cyan-700">--</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow text-center border-l-4 border-green-500">
+                <p class="text-gray-500 text-xs">TIR Promedio</p>
+                <p id="resTirPromedio" class="text-xl font-bold text-green-700">--</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow text-center border-l-4 border-red-500">
+                <p class="text-gray-500 text-xs">P(TIR > TREMA)</p>
+                <p id="resProb" class="text-xl font-bold text-red-700">--</p>
+            </div>
+        </div>
+
+        <!-- RECUADRO DE RECOMENDACIÓN (Corregido) -->
+        <div id="recomendacionBox" class="bg-white p-6 rounded-lg shadow-md mb-6 text-center border-t-4">
+            <p class="text-2xl font-bold" id="recomendacionTitulo">Calculando...</p>
+            <p class="text-sm text-gray-600 mt-2" id="recomendacionDetalle">--</p>
+        </div>
+
+        <!-- Estadísticas y Parámetros -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="bg-blue-600 text-white px-4 py-2 font-bold text-sm">Estadísticas de TIR</div>
+                <table class="min-w-full text-sm text-left" id="tablaEstadisticas">
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="bg-green-600 text-white px-4 py-2 font-bold text-sm">Parámetros de Simulación</div>
+                <table class="min-w-full text-sm text-left">
+                    <tr class="border-b"><td class="px-4 py-2 font-bold">Inversión inicial promedio</td><td id="paramInversion" class="px-4 py-2 text-right">--</td></tr>
+                    <tr class="border-b bg-gray-50"><td class="px-4 py-2 font-bold">Flujo anual promedio</td><td id="paramFlujo" class="px-4 py-2 text-right">--</td></tr>
+                    <tr class="border-b"><td class="px-4 py-2 font-bold">Horizonte</td><td class="px-4 py-2 text-right">5 años</td></tr>
+                    <tr class="border-b bg-gray-50"><td class="px-4 py-2 font-bold">Distribución inversión</td><td class="px-4 py-2 text-right">Triangular (±40%)</td></tr>
+                    <tr><td class="px-4 py-2 font-bold">Distribución flujo</td><td class="px-4 py-2 text-right">Triangular (±60%)</td></tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Gráfico de Histograma TIR -->
+        <div class="bg-white p-6 rounded-lg shadow-md mb-10">
+            <h3 class="font-bold mb-4 text-center text-blue-800">Distribución de TIR</h3>
+            <canvas id="chartTIR"></canvas>
+        </div>
+    </main>
+
+    <script>
+        Chart.defaults.color = '#111827';
+        let chartTIR;
+
+        function ejecutarSimulacion() {
+            const sims = document.getElementById('simulaciones').value;
+            const trema = document.getElementById('trema').value;
+            const inversion = document.getElementById('inversion').value;
+            const flujo = document.getElementById('flujo').value;
+
+            fetch(`/api/analisis/simular-tir?simulaciones=${sims}&trema=${trema}&inversionBase=${inversion}&flujoBase=${flujo}`)
+                .then(res => res.json())
+                .then(data => {
+                    // 1. Tarjetas
+                    document.getElementById('resSims').innerText = data.simulaciones;
+                    document.getElementById('resTrema').innerText = data.trema + "%";
+                    document.getElementById('resTirPromedio').innerText = data.tir_promedio + "%";
+                    document.getElementById('resProb').innerText = data.prob_rentable + "%";
+
+                    // 2. Parámetros mostrados
+                    document.getElementById('paramInversion').innerText = data.inversion_base + " Bs.";
+                    document.getElementById('paramFlujo').innerText = data.flujo_base + " Bs.";
+
+                    // 3. Recomendación (CORREGIDO)
+                    const recBox = document.getElementById('recomendacionBox');
+                    const recTitulo = document.getElementById('recomendacionTitulo');
+                    const recDetalle = document.getElementById('recomendacionDetalle');
+
+                    if (data.prob_rentable >= 90) {
+                        recBox.className = "bg-green-50 p-6 rounded-lg shadow-md mb-6 text-center border-t-4 border-green-500";
+                        recTitulo.innerHTML = "✅ SÍ vale la pena estudiar un posgrado";
+                        recTitulo.className = "text-2xl font-bold text-green-700";
+                    } else {
+                        recBox.className = "bg-red-50 p-6 rounded-lg shadow-md mb-6 text-center border-t-4 border-red-500";
+                        recTitulo.innerHTML = "❌ NO vale la pena estudiar un posgrado bajo estas condiciones";
+                        recTitulo.className = "text-2xl font-bold text-red-700";
+                    }
+                    recDetalle.innerText = `Con un ${data.prob_rentable}% de probabilidad, la TIR supera a la TREMA (${data.trema}%). Criterio: Si P(TIR > TREMA) ≥ 90% → Recomendado.`;
+
+                    // 4. Tabla Estadísticas
+                    document.getElementById('tablaEstadisticas').innerHTML = `
+                        <tr class="border-b"><td class="px-4 py-2 font-bold">TIR promedio</td><td class="px-4 py-2 text-right">${data.tir_promedio}%</td></tr>
+                        <tr class="border-b bg-gray-50"><td class="px-4 py-2 font-bold">TIR mediana</td><td class="px-4 py-2 text-right">${data.tir_mediana}%</td></tr>
+                        <tr class="border-b"><td class="px-4 py-2 font-bold">TIR mínima</td><td class="px-4 py-2 text-right">${data.tir_min}%</td></tr>
+                        <tr class="border-b bg-gray-50"><td class="px-4 py-2 font-bold">TIR máxima</td><td class="px-4 py-2 text-right">${data.tir_max}%</td></tr>
+                        <tr><td class="px-4 py-2 font-bold">VPN promedio</td><td class="px-4 py-2 text-right">${data.vpn_promedio} Bs.</td></tr>
+                    `;
+
+                    // 5. Histograma
+                    const tirs = data.todas_las_tirs;
+                    const min = Math.min(...tirs);
+                    const max = Math.max(...tirs);
+                    const numBins = 12;
+                    const rango = max - min;
+                    const tamanoBin = rango / numBins;
+
+                    const labels = [];
+                    const frecuencias = [];
+                    
+                    for (let i = 0; i < numBins; i++) {
+                        const inf = min + (i * tamanoBin);
+                        const sup = min + ((i + 1) * tamanoBin);
+                        labels.push(`${inf.toFixed(0)}-${sup.toFixed(0)}%`);
+                        frecuencias.push(tirs.filter(t => t >= inf && t <= sup).length);
+                    }
+
+                    if (chartTIR) chartTIR.destroy();
+                    
+                    chartTIR = new Chart(document.getElementById('chartTIR').getContext('2d'), {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Frecuencia de TIR',
+                                data: frecuencias,
+                                backgroundColor: '#3B82F6'
+                            }]
+                        },
+                        options: { 
+                            responsive: true,
+                            plugins: { legend: { display: false } },
+                            scales: { y: { beginAtZero: true } }
+                        }
+                    });
+                })
+                .catch(err => console.error("Error:", err));
+        }
+
+        document.addEventListener('DOMContentLoaded', ejecutarSimulacion);
+    </script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalle del Empleador - UMSS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans min-h-screen">
+
+    <nav class="bg-blue-900 text-white p-4 shadow-md">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold">Sistema de Análisis (ARCUSUR)</h1>
+            <div class="flex items-center gap-6 text-sm">
+                <a href="index.html" class="hover:underline">Inicio</a>
+                <a href="lista-empleadores.html" class="font-bold bg-blue-700 px-3 py-1 rounded">Lista Empleadores</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto p-6 max-w-4xl">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-semibold">Detalle del Empleador</h2>
+            <a href="lista-empleadores.html" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 transition text-sm">
+                &larr; Volver a la lista
+            </a>
+        </div>
+
+        <div id="contenedorDetalle" class="space-y-6">
+            <p class="text-center text-gray-500">Cargando datos...</p>
+        </div>
+    </main>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = urlParams.get('id');
+
+        if (!id) {
+            document.getElementById('contenedorDetalle').innerHTML = '<p class="text-red-500 text-center">Error: No se especificó un ID.</p>';
+        } else {
+            fetch(`/api/analisis/empleador/${id}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.error) {
+                        document.getElementById('contenedorDetalle').innerHTML = `<p class="text-red-500 text-center">${data.error}</p>`;
+                        return;
+                    }
+
+                    const resp = data.respuestas;
+                    
+                    const buscar = (palabra) => {
+                        const key = Object.keys(resp).find(k => k.toUpperCase().includes(palabra.toUpperCase()));
+                        return key ? resp[key] : "No especificado";
+                    };
+
+                    const html = `
+                        <!-- Datos de la Empresa -->
+                        <div class="bg-white rounded-lg shadow overflow-hidden">
+                            <div class="bg-blue-600 text-white px-4 py-2 font-bold">Datos de la Organización</div>
+                            <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                <p class="md:col-span-2"><strong>Nombre:</strong> ${data.nombre}</p>
+                                <p><strong>Tipo:</strong> ${buscar("TIPO DE ORGANIZACIÓN")}</p>
+                                <p><strong>Tamaño:</strong> ${buscar("TAMAÑO DE LA ORGANIZACIÓN")}</p>
+                                <p class="md:col-span-2"><strong>Rubro:</strong> ${buscar("RUBRO O SECTOR PRINCIPAL")}</p>
+                            </div>
+                        </div>
+
+                        <!-- Empleabilidad -->
+                        <div class="bg-white rounded-lg shadow overflow-hidden">
+                            <div class="bg-green-600 text-white px-4 py-2 font-bold">Empleabilidad y Demanda</div>
+                            <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                <p><strong>¿Ha contratado en últimos 5 años?:</strong> ${buscar("HA CONTRATADO INGENIEROS")}</p>
+                                <p><strong>¿Posibilidad de contratar?:</strong> ${buscar("POSIBILIDAD DE INCORPORAR")}</p>
+                                <p><strong>Nivel de formación demandado:</strong> ${buscar("NIVEL DE FORMACIÓN ACADÉMICA")}</p>
+                                <p><strong>Medio de convocatoria:</strong> ${buscar("TRAVÉS DE QUÉ MEDIO CONVOCA")}</p>
+                                <p class="md:col-span-2"><strong>Cargos desempeñados:</strong> ${buscar("QUÉ TIPO DE CARGOS")}</p>
+                            </div>
+                        </div>
+
+                        <!-- Nuevas Tendencias (Áreas y Herramientas) -->
+                        <div class="bg-white rounded-lg shadow overflow-hidden">
+                            <div class="bg-yellow-400 text-gray-900 px-4 py-2 font-bold">Tendencias y Competencias Requeridas</div>
+                            <div class="p-4 space-y-4 text-sm">
+                                <div>
+                                    <p class="font-bold text-gray-800 mb-1">Nuevas áreas / tecnologías:</p>
+                                    <p class="text-gray-600 text-justify">${buscar("QUÉ NUEVAS ÁREAS DE CONOCIMIENTO")}</p>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-gray-800 mb-1">Herramientas tecnológicas:</p>
+                                    <p class="text-gray-600 text-justify">${buscar("CUÁLES SON LAS NUEVAS HERRAMIENTAS")}</p>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-gray-800 mb-1">Habilidades y competencias:</p>
+                                    <p class="text-gray-600 text-justify">${buscar("HABILIDADES, COMPETENCIAS Y DESTREZAS")}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Percepción sobre la UMSS (Likert) -->
+                        <div class="bg-white rounded-lg shadow overflow-hidden mb-10">
+                            <div class="bg-purple-600 text-white px-4 py-2 font-bold">Percepción sobre la UMSS (Escala Likert)</div>
+                            <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                <p><strong>Confianza en la UMSS:</strong> ${buscar("BRINDA CONFIANZA A NUESTRA ORGANIZACIÓN")}</p>
+                                <p><strong>Consistencia del título:</strong> ${buscar("TÍTULO PROFESIONAL OTORGADO")}</p>
+                                <p><strong>Consulta de opinión:</strong> ${buscar("AUTORIDADES DE LA CARRERA DE INGENIERÍA")}</p>
+                                <p><strong>Coherencia del perfil:</strong> ${buscar("PERFIL PROFESIONAL DECLARADO")}</p>
+                            </div>
+                        </div>
+                    `;
+                    
+                    document.getElementById('contenedorDetalle').innerHTML = html;
+                })
+                .catch(err => {
+                    console.error(err);
+                    document.getElementById('contenedorDetalle').innerHTML = '<p class="text-red-500 text-center">Error al cargar los datos.</p>';
+                });
+        }
+    </script>
+</body>
+</html>

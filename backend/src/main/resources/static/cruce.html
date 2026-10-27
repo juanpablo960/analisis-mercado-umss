@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Cruce de Datos - UMSS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans min-h-screen">
+
+        <nav class="bg-blue-900 text-white p-4 shadow-md relative z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <!-- Logo / Título -->
+            <h1 class="text-xl font-bold">Sistema de Análisis (ARCUSUR)</h1>
+            
+            <!-- Menú de Navegación -->
+            <div class="flex items-center gap-6 text-sm">
+                
+                <!-- Inicio -->
+                <a href="index.html" class="hover:underline flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    <span>Inicio</span>
+                </a>
+
+                <!-- Dropdown Titulados -->
+                <div class="relative group py-2">
+                    <!-- Si estás en una página de Titulados, agrégale la clase bg-blue-700 px-3 py-1 rounded a este button -->
+                    <button class="hover:underline flex items-center gap-1 focus:outline-none">
+                        Titulados ▼
+                    </button>
+                    <div class="absolute left-0 mt-2 w-56 bg-white text-gray-800 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                        <a href="titulados.html" class="block px-4 py-2 hover:bg-gray-100 rounded-t-md">Dashboard</a>
+                        <a href="lista-titulados.html" class="block px-4 py-2 hover:bg-gray-100">Lista de Titulados</a>
+                        <a href="reportes-dinamicos.html" class="block px-4 py-2 hover:bg-gray-100 font-bold text-blue-600">Reportes Dinámicos</a>
+                        <a href="cruce.html" class="block px-4 py-2 hover:bg-gray-100 font-bold text-yellow-600">Cruce de Datos</a>
+                        <a href="monte-carlo.html" class="block px-4 py-2 hover:bg-gray-100 font-bold text-indigo-600">Simulación Monte Carlo</a>
+                        <a href="tir.html" class="block px-4 py-2 hover:bg-gray-100 rounded-b-md font-bold text-green-600">Simulación TIR</a>
+                    </div>
+                </div>
+
+                <!-- Dropdown Empleadores -->
+                <div class="relative group py-2">
+                    <!-- Si estás en una página de Empleadores, agrégale la clase bg-blue-700 px-3 py-1 rounded a este button -->
+                    <button class="hover:underline flex items-center gap-1 focus:outline-none">
+                        Empleadores ▼
+                    </button>
+                    <div class="absolute left-0 mt-2 w-56 bg-white text-gray-800 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                        <a href="empleadores.html" class="block px-4 py-2 hover:bg-gray-100 rounded-t-md">Dashboard</a>
+                        <a href="lista-empleadores.html" class="block px-4 py-2 hover:bg-gray-100">Lista de Empresas</a>
+                        <a href="reportes-empleadores.html" class="block px-4 py-2 hover:bg-gray-100 font-bold text-green-600">Reportes Dinámicos</a>
+                        <a href="cruce-empleadores.html" class="block px-4 py-2 hover:bg-gray-100 rounded-b-md font-bold text-yellow-600">Cruce de Datos</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto p-6 max-w-6xl">
+        <h2 class="text-2xl font-bold mb-2">Prueba Chi-Cuadrado - Matrices Cruzadas</h2>
+        <p class="text-gray-600 mb-6 text-sm">Selecciona dos variables para analizar si existe dependencia entre ellas.</p>
+
+        <!-- Panel de Selección de Variables -->
+        <div class="bg-white p-4 rounded-lg shadow-md mb-6 border-t-4 border-blue-500">
+            <div class="bg-blue-600 text-white px-3 py-1 rounded-t-md font-bold text-sm mb-4 inline-block">Seleccionar Variables</div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                <div>
+                    <label class="block text-sm font-bold mb-1">Variable 1 (Filas):</label>
+                    <select id="var1" class="w-full border rounded p-2">
+                        <option value="GÉNERO">Género</option>
+                        <option value="EDAD">Edad</option>
+                        <option value="SITUACIÓN LABORAL ACTUAL">Situación Laboral</option>
+                        <option value="PROGRAMA DE FORMACIÓN COMPLEMENTARIA">Nivel de Formación</option>
+                        <option value="HA REALIZADO O SE ENCUENTRA">¿Tiene Formación Complementaria?</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold mb-1">Variable 2 (Columnas):</label>
+                    <select id="var2" class="w-full border rounded p-2">
+                        <option value="EN CUÁL DE LAS SIGUIENTES ÁREAS">Área de Interés</option>
+                        <option value="DONDE HA CURSADO">Institución de Posgrado</option>
+                        <option value="FUENTE DE FINANCIAMIENTO">Fuente de Financiamiento</option>
+                        <option value="CUÁNTO TIEMPO SE DEMORÓ">Tiempo para 1er Empleo</option>
+                        <option value="EN CUÁNTOS EMPLEOS">Número de Empleos</option>
+                    </select>
+                </div>
+                <div>
+                    <button onclick="calcular()" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition w-full font-bold shadow">
+                        📊 Calcular
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 1. Matriz de Frecuencias Observadas (FO) -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+            <div class="bg-green-600 text-white px-4 py-2 font-bold">Matriz de Frecuencias Observadas (FO)</div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-sm text-left">
+                    <thead class="bg-gray-800 text-white">
+                        <tr id="headerFO"><th class="px-4 py-2">Variables</th></tr>
+                    </thead>
+                    <tbody id="bodyFO" class="divide-y divide-gray-200"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 2. Mapa de Calor -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+            <div class="bg-gray-900 text-white px-4 py-2 font-bold flex items-center gap-2">
+                🔥 Mapa de Calor: Frecuencias Observadas (Intensidad de Datos)
+            </div>
+            <div class="p-4">
+                <p class="text-xs text-gray-600 mb-2">Los colores más intensos indican mayor concentración de respuestas.</p>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full text-sm text-center border">
+                        <thead class="bg-gray-100 font-bold">
+                            <tr id="headerHeatmap"><th class="px-4 py-2 border">Variable 1 / Variable 2</th></tr>
+                        </thead>
+                        <tbody id="bodyHeatmap"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Matriz de Frecuencias Esperadas (FE) -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+            <div class="bg-cyan-600 text-white px-4 py-2 font-bold">Matriz de Frecuencias Esperadas (FE)</div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-sm text-left">
+                    <thead class="bg-gray-800 text-white">
+                        <tr id="headerFE"><th class="px-4 py-2">Variables</th></tr>
+                    </thead>
+                    <tbody id="bodyFE" class="divide-y divide-gray-200"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 4. Resultado -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden mb-10">
+            <div class="bg-yellow-400 text-gray-900 px-4 py-2 font-bold">Resultado de la Prueba Chi-Cuadrado</div>
+            <div class="p-6 grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                <div>
+                    <p class="text-sm text-gray-600">Chi-Cuadrado (X²)</p>
+                    <p id="resChi" class="text-2xl font-bold text-blue-700">--</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-600">Grados de Libertad</p>
+                    <p id="resGl" class="text-2xl font-bold text-cyan-700">--</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-600">Valor Crítico (α=0.05)</p>
+                    <p id="resCritico" class="text-2xl font-bold text-yellow-600">--</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-600">Conclusión</p>
+                    <p id="resConclusion" class="text-lg font-bold">--</p>
+                </div>
+            </div>
+            <div id="cajaConclusion" class="m-4 p-4 rounded text-center font-bold text-sm"></div>
+        </div>
+
+        <div class="text-center mb-10">
+            <a href="index.html" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 transition text-sm">&larr; Volver al inicio</a>
+        </div>
+    </main>
+
+    <script>
+        function calcular() {
+            const v1 = document.getElementById('var1').value;
+            const v2 = document.getElementById('var2').value;
+            
+            fetch(`/api/analisis/chi-cuadrado-dinamico?variable1=${encodeURIComponent(v1)}&variable2=${encodeURIComponent(v2)}`)
+                .then(res => res.json())
+                .then(data => {
+                    // 1. Matriz FO (Sin botones Ver)
+                    let headerFO = `<th class="px-4 py-2">${v1} / ${v2}</th>`;
+                    data.columnas.forEach(c => headerFO += `<th class="px-4 py-2 text-center">${c}</th>`);
+                    headerFO += '<th class="px-4 py-2 bg-gray-600 text-center">Total</th>';
+                    document.getElementById('headerFO').innerHTML = headerFO;
+
+                    let bodyFO = '';
+                    data.filas.forEach(f => {
+                        bodyFO += `<tr><td class="px-4 py-2 font-bold bg-gray-50">${f}</td>`;
+                        data.columnas.forEach(c => {
+                            const cantidad = data.matriz_fo[f][c] || 0;
+                            bodyFO += `<td class="px-4 py-2 text-center">${cantidad}</td>`;
+                        });
+                        bodyFO += `<td class="px-4 py-2 text-center font-bold bg-gray-100">${data.totales_fila[f]}</td></tr>`;
+                    });
+                    bodyFO += `<tr class="bg-gray-200 font-bold"><td class="px-4 py-2">Total</td>`;
+                    data.columnas.forEach(c => bodyFO += `<td class="px-4 py-2 text-center">${data.totales_columna[c]}</td>`);
+                    bodyFO += `<td class="px-4 py-2 text-center">${data.total_general}</td></tr>`;
+                    document.getElementById('bodyFO').innerHTML = bodyFO;
+
+                    // 2. Mapa de Calor (Sin botones Ver)
+                    let headerHeat = `<th class="px-4 py-2 border">${v1} / ${v2}</th>`;
+                    data.columnas.forEach(c => headerHeat += `<th class="px-4 py-2 border text-center">${c}</th>`);
+                    document.getElementById('headerHeatmap').innerHTML = headerHeat;
+
+                    let maxVal = 1;
+                    data.filas.forEach(f => data.columnas.forEach(c => {
+                        if ((data.matriz_fo[f][c] || 0) > maxVal) maxVal = data.matriz_fo[f][c];
+                    }));
+
+                    let bodyHeat = '';
+                    data.filas.forEach(f => {
+                        bodyHeat += `<tr><td class="px-4 py-2 border font-bold bg-gray-50">${f}</td>`;
+                        data.columnas.forEach(c => {
+                            const val = data.matriz_fo[f][c] || 0;
+                            const intensidad = Math.round((val / maxVal) * 255);
+                            const color = `rgb(255, ${255 - intensidad}, ${255 - intensidad})`;
+                            bodyHeat += `<td class="px-4 py-2 border text-center font-semibold" style="background-color: ${color};">${val}</td>`;
+                        });
+                        bodyHeat += `</tr>`;
+                    });
+                    document.getElementById('bodyHeatmap').innerHTML = bodyHeat;
+
+                    // 3. Matriz FE (Sin botones Ver)
+                    let headerFE = `<th class="px-4 py-2">${v1} / ${v2}</th>`;
+                    data.columnas.forEach(c => headerFE += `<th class="px-4 py-2 text-center">${c}</th>`);
+                    document.getElementById('headerFE').innerHTML = headerFE;
+
+                    let bodyFE = '';
+                    data.filas.forEach(f => {
+                        bodyFE += `<tr><td class="px-4 py-2 font-bold bg-gray-50">${f}</td>`;
+                        data.columnas.forEach(c => {
+                            bodyFE += `<td class="px-4 py-2 text-center">${data.matriz_fe[f][c]}</td>`;
+                        });
+                        bodyFE += `</tr>`;
+                    });
+                    document.getElementById('bodyFE').innerHTML = bodyFE;
+
+                    // 4. Resultados
+                    document.getElementById('resChi').innerText = data.chi_calculado;
+                    document.getElementById('resGl').innerText = data.grados_libertad;
+                    document.getElementById('resCritico').innerText = data.valor_critico;
+                    document.getElementById('resConclusion').innerText = data.es_independiente ? "Independientes" : "Dependientes";
+                    document.getElementById('resConclusion').className = data.es_independiente ? "text-lg font-bold text-green-600" : "text-lg font-bold text-red-600";
+
+                    const caja = document.getElementById('cajaConclusion');
+                    caja.innerText = data.conclusion;
+                    caja.className = data.es_independiente 
+                        ? "m-4 p-4 rounded text-center font-bold text-sm bg-green-100 text-green-800 border border-green-300" 
+                        : "m-4 p-4 rounded text-center font-bold text-sm bg-red-100 text-red-800 border border-red-300";
+                })
+                .catch(err => console.error("Error:", err));
+        }
+
+        document.addEventListener('DOMContentLoaded', calcular);
+    </script>
+</body>
+</html>

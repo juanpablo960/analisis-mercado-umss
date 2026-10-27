@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Resultados - UMSS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans min-h-screen">
+
+        <nav class="bg-blue-900 text-white p-4 shadow-md relative z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <!-- Logo / Título -->
+            <h1 class="text-xl font-bold">Sistema de Análisis (ARCUSUR)</h1>
+            
+            <!-- Menú de Navegación -->
+            <div class="flex items-center gap-6 text-sm">
+                
+                <!-- Inicio -->
+                <a href="index.html" class="hover:underline flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    <span>Inicio</span>
+                </a>
+
+                <!-- Dropdown Titulados -->
+                <div class="relative group py-2">
+                    <!-- Si estás en una página de Titulados, agrégale la clase bg-blue-700 px-3 py-1 rounded a este button -->
+                    <button class="hover:underline flex items-center gap-1 focus:outline-none">
+                        Titulados ▼
+                    </button>
+                    <div class="absolute left-0 mt-2 w-56 bg-white text-gray-800 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                        <a href="titulados.html" class="block px-4 py-2 hover:bg-gray-100 rounded-t-md">Dashboard</a>
+                        <a href="lista-titulados.html" class="block px-4 py-2 hover:bg-gray-100">Lista de Titulados</a>
+                        <a href="reportes-dinamicos.html" class="block px-4 py-2 hover:bg-gray-100 font-bold text-blue-600">Reportes Dinámicos</a>
+                        <a href="cruce.html" class="block px-4 py-2 hover:bg-gray-100 font-bold text-yellow-600">Cruce de Datos</a>
+                        <a href="monte-carlo.html" class="block px-4 py-2 hover:bg-gray-100 font-bold text-indigo-600">Simulación Monte Carlo</a>
+                        <a href="tir.html" class="block px-4 py-2 hover:bg-gray-100 rounded-b-md font-bold text-green-600">Simulación TIR</a>
+                    </div>
+                </div>
+
+                <!-- Dropdown Empleadores -->
+                <div class="relative group py-2">
+                    <!-- Si estás en una página de Empleadores, agrégale la clase bg-blue-700 px-3 py-1 rounded a este button -->
+                    <button class="hover:underline flex items-center gap-1 focus:outline-none">
+                        Empleadores ▼
+                    </button>
+                    <div class="absolute left-0 mt-2 w-56 bg-white text-gray-800 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                        <a href="empleadores.html" class="block px-4 py-2 hover:bg-gray-100 rounded-t-md">Dashboard</a>
+                        <a href="lista-empleadores.html" class="block px-4 py-2 hover:bg-gray-100">Lista de Empresas</a>
+                        <a href="reportes-empleadores.html" class="block px-4 py-2 hover:bg-gray-100 font-bold text-green-600">Reportes Dinámicos</a>
+                        <a href="cruce-empleadores.html" class="block px-4 py-2 hover:bg-gray-100 rounded-b-md font-bold text-yellow-600">Cruce de Datos</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+        <main class="container mx-auto p-6">
+        
+        <!-- Tarjetas de Estadística Descriptiva -->
+        <h2 class="text-2xl font-semibold mb-4">1. Estadística Descriptiva (Titulados)</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div class="bg-white p-4 rounded-lg shadow border-l-4 border-blue-500">
+                <p class="text-gray-500 text-sm">Media de Años Profesionales</p>
+                <p id="mediaAnios" class="text-3xl font-bold text-blue-700">--</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow border-l-4 border-green-500">
+                <p class="text-gray-500 text-sm">Mínimo Registrado</p>
+                <p id="minAnios" class="text-3xl font-bold text-green-700">--</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow border-l-4 border-purple-500">
+                <p class="text-gray-500 text-sm">Máximo Registrado</p>
+                <p id="maxAnios" class="text-3xl font-bold text-purple-700">--</p>
+            </div>
+        </div>
+
+        <!-- Gráficos y Simulación -->
+        <h2 class="text-2xl font-semibold mb-4">2. Análisis Visual y Simulación</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+            <!-- Gráfico de Pastel -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="font-bold mb-4 text-center">Distribución de Áreas de Interés (Titulados)</h3>
+                <canvas id="graficoAreas"></canvas>
+            </div>
+
+            <!-- Tarjeta de Simulación -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="font-bold mb-4 text-center">Simulación de Empleabilidad (1000 Corridas)</h3>
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center border-b pb-2">
+                        <span class="text-gray-600">Tiempo Promedio para 1er Empleo:</span>
+                        <span id="simTiempo" class="font-bold text-blue-600">-- meses</span>
+                    </div>
+                    <div class="flex justify-between items-center border-b pb-2">
+                        <span class="text-gray-600">Probabilidad de Éxito (< 6 meses):</span>
+                        <span id="simProbabilidad" class="font-bold text-green-600">-- %</span>
+                    </div>
+                    <div class="flex justify-between items-center border-b pb-2">
+                        <span class="text-gray-600">Intervalo de Confianza (95%):</span>
+                        <span id="simIntervalo" class="font-bold text-purple-600">--</span>
+                    </div>
+                </div>
+                <div class="mt-6 text-center">
+                    <button onclick="ejecutarSimulacion(5000)" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition">
+                        Volver a Simular (5000 corridas)
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Nueva Sección: Empleadores y Chi-Cuadrado -->
+        <h2 class="text-2xl font-semibold mb-4">3. Análisis de Empleadores y Prueba Chi-Cuadrado</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            
+            <!-- Gráfico de Empleadores -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="font-bold mb-4 text-center">Nivel de Formación Demandado por Empleadores</h3>
+                <canvas id="graficoEmpleadores"></canvas>
+            </div>
+
+            <!-- Resultado de Chi-Cuadrado -->
+            <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-yellow-500">
+                <h3 class="font-bold mb-4 text-center">Prueba Chi-Cuadrado: Género vs Área de Interés</h3>
+                <div class="text-center mb-4">
+                    <p class="text-4xl font-bold" id="chiValor">--</p>
+                    <p class="text-sm text-gray-500">Estadístico Calculado</p>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <p class="text-sm"><strong>Grados de Libertad:</strong> <span id="chiGl">--</span></p>
+                    <p class="text-sm"><strong>Valor Crítico (95%):</strong> <span id="chiCritico">--</span></p>
+                    <p class="text-md font-bold mt-2" id="chiConclusion" style="color: #d97706;">--</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+        <script>
+        // 1. Cargar datos descriptivos
+        fetch('/api/analisis/descriptiva')
+            .then(res => res.json())
+            .then(data => {
+                if(data.media_anios) {
+                    document.getElementById('mediaAnios').innerText = data.media_anios.toFixed(1) + " años";
+                    document.getElementById('minAnios').innerText = data.min_anios + " años";
+                    document.getElementById('maxAnios').innerText = data.max_anios + " años";
+                }
+            });
+
+        // 2. Gráfico de áreas (Titulados)
+        fetch('/api/analisis/areas-interes')
+            .then(res => res.json())
+            .then(data => {
+                new Chart(document.getElementById('graficoAreas').getContext('2d'), {
+                    type: 'pie',
+                    data: {
+                        labels: Object.keys(data),
+                        datasets: [{ data: Object.values(data), backgroundColor: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'] }]
+                    },
+                    options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+                });
+            });
+
+        // 3. Gráfico de Empleadores
+        fetch('/api/analisis/empleadores/nivel-formacion')
+            .then(res => res.json())
+            .then(data => {
+                new Chart(document.getElementById('graficoEmpleadores').getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(data),
+                        datasets: [{ label: 'Cantidad de Empresas', data: Object.values(data), backgroundColor: '#10B981' }]
+                    },
+                    options: { responsive: true, plugins: { legend: { display: false } } }
+                });
+            });
+
+        // 4. Prueba Chi-Cuadrado
+        fetch('/api/analisis/chi-cuadrado')
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('chiValor').innerText = data.chi_calculado;
+                document.getElementById('chiGl').innerText = data.grados_libertad;
+                document.getElementById('chiCritico').innerText = data.valor_critico;
+                document.getElementById('chiConclusion').innerText = data.conclusion;
+            });
+
+        // 5. Simulación
+        function ejecutarSimulacion(corridas = 1000) {
+            fetch(`/api/analisis/simular-empleabilidad?corridas=${corridas}`)
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('simTiempo').innerText = data.tiempo_promedio_meses + " meses";
+                    document.getElementById('simProbabilidad').innerText = data.probabilidad_exito + " %";
+                    document.getElementById('simIntervalo').innerText = `[${data.intervalo_confianza_inferior} - ${data.intervalo_confianza_superior}] meses`;
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            ejecutarSimulacion(1000);
+        });
+    </script>
+</body>
+</html>

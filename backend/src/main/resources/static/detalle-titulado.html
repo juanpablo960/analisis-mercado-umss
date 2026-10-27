@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalle del Titulado - UMSS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans min-h-screen">
+
+    <nav class="bg-blue-900 text-white p-4 shadow-md">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold">Sistema de Análisis (ARCUSUR)</h1>
+            <div class="flex items-center gap-6 text-sm">
+                <a href="index.html" class="hover:underline">Inicio</a>
+                <a href="lista-titulados.html" class="font-bold bg-blue-700 px-3 py-1 rounded">Lista de Titulados</a>
+                <a href="empleadores.html" class="hover:underline">Empleadores</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto p-6 max-w-4xl">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-semibold">Detalle del Titulado</h2>
+            <a href="lista-titulados.html" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 transition text-sm">
+                &larr; Volver a la lista
+            </a>
+        </div>
+
+        <!-- Contenedor donde se cargará todo dinámicamente -->
+        <div id="contenedorDetalle" class="space-y-6">
+            <p class="text-center text-gray-500">Cargando datos...</p>
+        </div>
+    </main>
+
+    <script>
+        // Obtener el ID de la URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = urlParams.get('id');
+
+        if (!id) {
+            document.getElementById('contenedorDetalle').innerHTML = '<p class="text-red-500 text-center">Error: No se especificó un ID.</p>';
+        } else {
+            fetch(`/api/analisis/titulado/${id}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.error) {
+                        document.getElementById('contenedorDetalle').innerHTML = `<p class="text-red-500 text-center">${data.error}</p>`;
+                        return;
+                    }
+
+                    const resp = data.respuestas;
+                    
+                    // Función auxiliar para buscar el valor de una pregunta por palabra clave
+                    const buscar = (palabra) => {
+                        const key = Object.keys(resp).find(k => k.toUpperCase().includes(palabra.toUpperCase()));
+                        return key ? resp[key] : "No especificado";
+                    };
+
+                    // Función para formatear las respuestas que son arrays (ej. "Inteligencia Artificial;Base de Datos")
+                    const formatearLista = (palabra) => {
+                        let val = buscar(palabra);
+                        if (val === "No especificado" || !val) return "No especificado";
+                        return val.replace(/;/g, ', ');
+                    };
+
+                    // Construir el HTML
+                    const html = `
+                        <!-- Datos Generales -->
+                        <div class="bg-white rounded-lg shadow overflow-hidden">
+                            <div class="bg-blue-600 text-white px-4 py-2 font-bold">Datos Generales</div>
+                            <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                <p><strong>ID:</strong> ${data.id}</p>
+                                <p><strong>Edad:</strong> ${buscar("EDAD")}</p>
+                                <p><strong>Género:</strong> ${buscar("GÉNERO")}</p>
+                                <p><strong>Año de egreso:</strong> ${buscar("AÑOS DE VIDA PROFESIONAL")}</p>
+                            </div>
+                        </div>
+
+                        <!-- Formación Complementaria -->
+                        <div class="bg-white rounded-lg shadow overflow-hidden">
+                            <div class="bg-cyan-500 text-white px-4 py-2 font-bold">Formación Complementaria</div>
+                            <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                <p><strong>¿Realizó formación complementaria?:</strong> ${buscar("HA REALIZADO O SE ENCUENTRA")}</p>
+                                <p><strong>Nivel máximo:</strong> ${buscar("PROGRAMA DE FORMACIÓN COMPLEMENTARIA")}</p>
+                                <p><strong>Dónde cursó:</strong> ${buscar("DONDE HA CURSADO")}</p>
+                                <p><strong>Financiamiento:</strong> ${buscar("FUENTE DE FINANCIAMIENTO")}</p>
+                                <p class="md:col-span-2"><strong>Nombre del programa:</strong> ${buscar("INDIQUE EL NOMBRE DEL PROGRAMA")}</p>
+                            </div>
+                        </div>
+
+                        <!-- Preferencias de Posgrado -->
+                        <div class="bg-white rounded-lg shadow overflow-hidden">
+                            <div class="bg-yellow-400 text-gray-900 px-4 py-2 font-bold">Preferencias de Posgrado</div>
+                            <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                <p><strong>¿Interesado en posgrado?:</strong> ${buscar("ESTARÍA INTERESADO")}</p>
+                                <p><strong>Área de interés:</strong> ${buscar("EN CUÁL DE LAS SIGUIENTES ÁREAS")}</p>
+                                <p><strong>Organización preferida:</strong> ${buscar("EN CASO DE REALIZAR UN ESTUDIO DE POSGRADO")}</p>
+                                <p><strong>Opinión sobre posgrado FCyT:</strong> ${buscar("OPINIÓN PERSONAL")} </p>
+                            </div>
+                        </div>
+
+                        <!-- Empleabilidad -->
+                        <div class="bg-white rounded-lg shadow overflow-hidden">
+                            <div class="bg-green-600 text-white px-4 py-2 font-bold">Empleabilidad</div>
+                            <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                <p><strong>Años de vida profesional:</strong> ${buscar("AÑOS DE VIDA PROFESIONAL")}</p>
+                                <p><strong>Tiempo desempleado:</strong> ${buscar("CANTIDAD CORRESPONDE AL TOTAL DE TIEMPO")}</p>
+                                <p><strong>Situación laboral:</strong> ${buscar("SITUACIÓN LABORAL ACTUAL")}</p>
+                                <p><strong>Tiempo para primer empleo:</strong> ${buscar("CUÁNTO TIEMPO SE DEMORÓ")}</p>
+                                <p><strong>Número de empleos:</strong> ${buscar("EN CUÁNTOS EMPLEOS")}</p>
+                                <p><strong>¿Ha trabajado antes?:</strong> ${buscar("HA TENIDO ALGÚN TRABAJO ANTES")}</p>
+                            </div>
+                        </div>
+
+                        <!-- Aspectos de la Carrera -->
+                        <div class="bg-white rounded-lg shadow overflow-hidden">
+                            <div class="bg-gray-800 text-white px-4 py-2 font-bold">Aspectos de la Carrera</div>
+                            <div class="p-4 space-y-3 text-sm">
+                                <p><strong>Aspectos de utilidad:</strong><br> <span class="text-gray-600">${formatearLista("QUÉ ASPECTOS DE LA CARRERA LES RESULTARON")}</span></p>
+                                <p><strong>Aspectos a mejorar:</strong><br> <span class="text-gray-600">${formatearLista("QUÉ ASPECTOS DE LA CARRERA CONSIDERA QUE PUEDEN MEJORAR")}</span></p>
+                                <p><strong>Asignaturas con ventaja competitiva:</strong><br> <span class="text-gray-600">${formatearLista("INDIQUE 5 ASIGNATURAS")}</span></p>
+                                <p><strong>Asignaturas poco útiles:</strong><br> <span class="text-gray-600">${formatearLista("ASIGNATURAS CURSADAS EN LA CARRERA QUE NO LE RESULTARON")}</span></p>
+                            </div>
+                        </div>
+
+                        <!-- Contacto -->
+                        <div class="bg-white rounded-lg shadow overflow-hidden mb-10">
+                            <div class="bg-blue-500 text-white px-4 py-2 font-bold">Contacto</div>
+                            <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                <p><strong>Email:</strong> ${buscar("EMAIL DE CONTACTO")}</p>
+                                <p><strong>Teléfono:</strong> ${buscar("NÚMERO TELEFÓNICO")}</p>
+                                <p><strong>LinkedIn:</strong> ${buscar("LINK DE LINKEDIN")}</p>
+                                <p><strong>Red de contactos:</strong> ${buscar("LE INTERESARÍA FORMAR PARTE")}</p>
+                            </div>
+                        </div>
+                    `;
+                    
+                    document.getElementById('contenedorDetalle').innerHTML = html;
+                })
+                .catch(err => {
+                    console.error(err);
+                    document.getElementById('contenedorDetalle').innerHTML = '<p class="text-red-500 text-center">Error al cargar los datos.</p>';
+                });
+        }
+    </script>
+</body>
+</html>

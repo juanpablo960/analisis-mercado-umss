@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Reportes Empleadores - UMSS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans min-h-screen">
+
+        <nav class="bg-blue-900 text-white p-4 shadow-md relative z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <!-- Logo / Título -->
+            <h1 class="text-xl font-bold">Sistema de Análisis (ARCUSUR)</h1>
+            
+            <!-- Menú de Navegación -->
+            <div class="flex items-center gap-6 text-sm">
+                
+                <!-- Inicio -->
+                <a href="index.html" class="hover:underline flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    <span>Inicio</span>
+                </a>
+
+                <!-- Dropdown Titulados -->
+                <div class="relative group py-2">
+                    <!-- Si estás en una página de Titulados, agrégale la clase bg-blue-700 px-3 py-1 rounded a este button -->
+                    <button class="hover:underline flex items-center gap-1 focus:outline-none">
+                        Titulados ▼
+                    </button>
+                    <div class="absolute left-0 mt-2 w-56 bg-white text-gray-800 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                        <a href="titulados.html" class="block px-4 py-2 hover:bg-gray-100 rounded-t-md">Dashboard</a>
+                        <a href="lista-titulados.html" class="block px-4 py-2 hover:bg-gray-100">Lista de Titulados</a>
+                        <a href="reportes-dinamicos.html" class="block px-4 py-2 hover:bg-gray-100 font-bold text-blue-600">Reportes Dinámicos</a>
+                        <a href="cruce.html" class="block px-4 py-2 hover:bg-gray-100 font-bold text-yellow-600">Cruce de Datos</a>
+                        <a href="monte-carlo.html" class="block px-4 py-2 hover:bg-gray-100 font-bold text-indigo-600">Simulación Monte Carlo</a>
+                        <a href="tir.html" class="block px-4 py-2 hover:bg-gray-100 rounded-b-md font-bold text-green-600">Simulación TIR</a>
+                    </div>
+                </div>
+
+                <!-- Dropdown Empleadores -->
+                <div class="relative group py-2">
+                    <!-- Si estás en una página de Empleadores, agrégale la clase bg-blue-700 px-3 py-1 rounded a este button -->
+                    <button class="hover:underline flex items-center gap-1 focus:outline-none">
+                        Empleadores ▼
+                    </button>
+                    <div class="absolute left-0 mt-2 w-56 bg-white text-gray-800 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                        <a href="empleadores.html" class="block px-4 py-2 hover:bg-gray-100 rounded-t-md">Dashboard</a>
+                        <a href="lista-empleadores.html" class="block px-4 py-2 hover:bg-gray-100">Lista de Empresas</a>
+                        <a href="reportes-empleadores.html" class="block px-4 py-2 hover:bg-gray-100 font-bold text-green-600">Reportes Dinámicos</a>
+                        <a href="cruce-empleadores.html" class="block px-4 py-2 hover:bg-gray-100 rounded-b-md font-bold text-yellow-600">Cruce de Datos</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto p-6">
+        <h2 class="text-2xl font-semibold mb-2">Reportes Dinámicos de Empleadores</h2>
+        <p class="text-gray-600 mb-6 text-sm">Analiza la demanda laboral aplicando filtros en tiempo real.</p>
+
+        <!-- Panel de Filtros -->
+        <div class="bg-white p-4 rounded-lg shadow-md mb-8 border-t-4 border-green-500">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                <div>
+                    <label class="block text-sm font-bold mb-1">Tipo de Organización</label>
+                    <select id="filtroTipo" class="w-full border rounded p-2">
+                        <option value="">Todos</option>
+                        <option value="Privado">Privado</option>
+                        <option value="Público">Público</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold mb-1">Tamaño</label>
+                    <select id="filtroTamano" class="w-full border rounded p-2">
+                        <option value="">Todos</option>
+                        <option value="Grande">Grande</option>
+                        <option value="Mediana">Mediana</option>
+                        <option value="Pequeña">Pequeña</option>
+                        <option value="Micro">Micro</option>
+                    </select>
+                </div>
+                <div class="md:col-span-2 flex gap-2">
+                    <button onclick="aplicarFiltros()" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 transition w-full font-bold">
+                        Generar Reporte
+                    </button>
+                    <button onclick="limpiarFiltros()" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition">Limpiar</button>
+                </div>
+            </div>
+            <p id="resultadoTotal" class="mt-4 text-sm font-bold text-green-700 bg-green-50 p-2 rounded inline-block">
+                Cargando resultados...
+            </p>
+        </div>
+
+        <!-- Cuadrícula de Gráficos -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="font-bold mb-4 text-center text-green-800">Tipo de Organización</h3>
+                <canvas id="chartTipo"></canvas>
+                <div id="tablaTipo"></div>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="font-bold mb-4 text-center text-green-800">Tamaño de la Empresa</h3>
+                <canvas id="chartTamano"></canvas>
+                <div id="tablaTamano"></div>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="font-bold mb-4 text-center text-green-800">Nivel de Formación Demandado</h3>
+                <canvas id="chartNivel"></canvas>
+                <div id="tablaNivel"></div>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="font-bold mb-4 text-center text-green-800">Cargos más Demandados</h3>
+                <canvas id="chartCargos"></canvas>
+                <div id="tablaCargos"></div>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md md:col-span-2">
+                <h3 class="font-bold mb-4 text-center text-green-800">Distribución por Rubro</h3>
+                <canvas id="chartRubro"></canvas>
+                <div id="tablaRubro"></div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let charts = {};
+
+        function crearGrafico(id, tipo, dataObj, colores, nombreColumna) {
+            if (charts[id]) { charts[id].destroy(); } 
+            
+            const labels = Object.keys(dataObj);
+            const values = Object.values(dataObj);
+            const total = values.reduce((a, b) => a + b, 0);
+
+            Chart.defaults.color = '#1F2937';
+            Chart.defaults.font.size = 12;
+            
+            charts[id] = new Chart(document.getElementById(id).getContext('2d'), {
+                type: tipo,
+                data: {
+                    labels: labels,
+                    datasets: [{ data: values, backgroundColor: colores, borderWidth: 2, borderColor: '#ffffff' }]
+                },
+                options: { 
+                    responsive: true, maintainAspectRatio: true,
+                    plugins: { legend: { position: 'bottom' }, tooltip: { backgroundColor: 'rgba(17, 24, 39, 0.9)' } },
+                    scales: tipo === 'bar' ? { y: { beginAtZero: true } } : {}
+                }
+            });
+
+            // Generar tabla
+            const tablaId = id.replace('chart', 'tabla');
+            const tablaContenedor = document.getElementById(tablaId);
+            
+            if (tablaContenedor) {
+                const filtroT = document.getElementById('filtroTipo').value;
+                const filtroTm = document.getElementById('filtroTamano').value;
+
+                let htmlTabla = `
+                    <table class="min-w-full text-sm text-left mt-4">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-100">
+                            <tr>
+                                <th class="px-2 py-2">Categoría</th>
+                                <th class="px-2 py-2 text-center">Cantidad</th>
+                                <th class="px-2 py-2 text-center">Porcentaje</th>
+                                <th class="px-2 py-2 text-center">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                labels.forEach((label, index) => {
+                    const cantidad = values[index];
+                    const porcentaje = total > 0 ? ((cantidad / total) * 100).toFixed(2) : 0;
+                    const color = colores[index % colores.length];
+                    const urlFiltro = `lista-filtrada-empleadores-view.html?categoria=${encodeURIComponent(nombreColumna)}&valor=${encodeURIComponent(label)}&filtroTipo=${encodeURIComponent(filtroT)}&filtroTamano=${encodeURIComponent(filtroTm)}`;
+
+                    htmlTabla += `
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="px-2 py-2 flex items-center gap-2">
+                                <span style="display:inline-block; width:12px; height:12px; border-radius:50%; background-color:${color};"></span>
+                                ${label}
+                            </td>
+                            <td class="px-2 py-2 text-center font-semibold">${cantidad}</td>
+                            <td class="px-2 py-2 text-center">
+                                <span class="bg-green-100 text-green-800 text-xs font-semibold px-2 py-1 rounded">${porcentaje}%</span>
+                            </td>
+                            <td class="px-2 py-2 text-center">
+                                <a href="${urlFiltro}" class="bg-green-600 text-white px-3 py-1 rounded text-xs hover:bg-green-700 transition">Ver</a>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                htmlTabla += `</tbody></table>`;
+                tablaContenedor.innerHTML = htmlTabla;
+            }
+        }
+
+        function aplicarFiltros() {
+            const tipo = document.getElementById('filtroTipo').value;
+            const tamano = document.getElementById('filtroTamano').value;
+            
+            const url = `/api/analisis/reportes-empleadores?tipo=${encodeURIComponent(tipo)}&tamano=${encodeURIComponent(tamano)}`;
+            
+            fetch(url).then(res => res.json()).then(data => {
+                document.getElementById('resultadoTotal').innerText = `Resultados: ${data.total_filtrados} empleadores encontrados`;
+                
+                crearGrafico('chartTipo', 'doughnut', data.por_tipo, ['#3B82F6', '#8B5CF6'], 'TIPO DE ORGANIZACIÓN');
+                crearGrafico('chartTamano', 'pie', data.por_tamano, ['#10B981', '#F59E0B', '#3B82F6', '#EF4444'], 'TAMAÑO DE LA ORGANIZACIÓN');
+                crearGrafico('chartNivel', 'bar', data.por_nivel, ['#F59E0B', '#EF4444', '#3B82F6', '#14B8A6'], 'NIVEL DE FORMACIÓN ACADÉMICA');
+                crearGrafico('chartCargos', 'bar', data.por_cargos, ['#8B5CF6', '#EC4899', '#3B82F6', '#F59E0B', '#10B981'], 'QUÉ TIPO DE CARGOS');
+                crearGrafico('chartRubro', 'bar', data.por_rubro, ['#3B82F6', '#F59E0B', '#10B981', '#8B5CF6', '#EF4444', '#14B8A6', '#EC4899'], 'RUBRO O SECTOR PRINCIPAL');
+            });
+        }
+
+        function limpiarFiltros() {
+            document.getElementById('filtroTipo').value = '';
+            document.getElementById('filtroTamano').value = '';
+            aplicarFiltros();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => aplicarFiltros());
+    </script>
+</body>
+</html>

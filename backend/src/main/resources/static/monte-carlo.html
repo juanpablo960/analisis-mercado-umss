@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Simulación Monte Carlo - UMSS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans min-h-screen">
+
+        <nav class="bg-blue-900 text-white p-4 shadow-md relative z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <!-- Logo / Título -->
+            <h1 class="text-xl font-bold">Sistema de Análisis (ARCUSUR)</h1>
+            
+            <!-- Menú de Navegación -->
+            <div class="flex items-center gap-6 text-sm">
+                
+                <!-- Inicio -->
+                <a href="index.html" class="hover:underline flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    <span>Inicio</span>
+                </a>
+
+                <!-- Dropdown Titulados -->
+                <div class="relative group py-2">
+                    <!-- Si estás en una página de Titulados, agrégale la clase bg-blue-700 px-3 py-1 rounded a este button -->
+                    <button class="hover:underline flex items-center gap-1 focus:outline-none">
+                        Titulados ▼
+                    </button>
+                    <div class="absolute left-0 mt-2 w-56 bg-white text-gray-800 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                        <a href="titulados.html" class="block px-4 py-2 hover:bg-gray-100 rounded-t-md">Dashboard</a>
+                        <a href="lista-titulados.html" class="block px-4 py-2 hover:bg-gray-100">Lista de Titulados</a>
+                        <a href="reportes-dinamicos.html" class="block px-4 py-2 hover:bg-gray-100 font-bold text-blue-600">Reportes Dinámicos</a>
+                        <a href="cruce.html" class="block px-4 py-2 hover:bg-gray-100 font-bold text-yellow-600">Cruce de Datos</a>
+                        <a href="monte-carlo.html" class="block px-4 py-2 hover:bg-gray-100 font-bold text-indigo-600">Simulación Monte Carlo</a>
+                        <a href="tir.html" class="block px-4 py-2 hover:bg-gray-100 rounded-b-md font-bold text-green-600">Simulación TIR</a>
+                    </div>
+                </div>
+
+                <!-- Dropdown Empleadores -->
+                <div class="relative group py-2">
+                    <!-- Si estás en una página de Empleadores, agrégale la clase bg-blue-700 px-3 py-1 rounded a este button -->
+                    <button class="hover:underline flex items-center gap-1 focus:outline-none">
+                        Empleadores ▼
+                    </button>
+                    <div class="absolute left-0 mt-2 w-56 bg-white text-gray-800 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                        <a href="empleadores.html" class="block px-4 py-2 hover:bg-gray-100 rounded-t-md">Dashboard</a>
+                        <a href="lista-empleadores.html" class="block px-4 py-2 hover:bg-gray-100">Lista de Empresas</a>
+                        <a href="reportes-empleadores.html" class="block px-4 py-2 hover:bg-gray-100 font-bold text-green-600">Reportes Dinámicos</a>
+                        <a href="cruce-empleadores.html" class="block px-4 py-2 hover:bg-gray-100 rounded-b-md font-bold text-yellow-600">Cruce de Datos</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto p-6">
+        <h2 class="text-2xl font-semibold mb-2">Simulación Monte Carlo - Demanda de Posgrados</h2>
+        <p class="text-gray-600 mb-6 text-sm">Proyección futura de la demanda de posgrados mediante simulación de sistemas.</p>
+
+        <!-- Panel de Parámetros -->
+        <div class="bg-white p-4 rounded-lg shadow-md mb-6 border-t-4 border-blue-500">
+            <h3 class="font-bold text-sm text-blue-800 mb-2">Parámetros de Simulación</h3>
+            <div class="flex items-center gap-4">
+                <label class="text-sm font-bold">Número de simulaciones:</label>
+                <select id="simulaciones" class="border rounded p-2 text-sm w-32">
+                    <option value="100">100</option>
+                    <option value="500">500</option>
+                    <option value="1000" selected>1000</option>
+                    <option value="5000">5000</option>
+                    <option value="10000">10000</option>
+                </select>
+                <button onclick="ejecutarSimulacion()" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition text-sm font-bold w-full md:w-auto">
+                    Ejecutar Simulación
+                </button>
+            </div>
+        </div>
+
+        <!-- Panel del Generador Congruencial -->
+        <div class="bg-white p-4 rounded-lg shadow-md mb-6 border-t-4 border-gray-800">
+            <h3 class="font-bold text-sm text-gray-800 mb-2">Generador Congruencial Mixto</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div>
+                    <p><strong>Fórmula:</strong> X<sub>n+1</sub> = (aX<sub>n</sub> + c) mod m</p>
+                    <p class="mt-2"><strong>a:</strong> 5</p>
+                    <p><strong>c:</strong> 7</p>
+                    <p><strong>m:</strong> 8</p>
+                    <p><strong>Semilla:</strong> 4</p>
+                    <p class="mt-2"><strong>Período completo:</strong> <span class="bg-green-600 text-white px-2 py-1 rounded text-xs">8</span></p>
+                </div>
+                <div class="bg-gray-50 p-2 rounded">
+                    <p class="font-bold mb-1">Primeros 20 números generados:</p>
+                    <p id="listaAleatorios" class="text-xs font-mono text-gray-600 leading-tight">--</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tarjetas de Resultados -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div class="bg-white p-4 rounded-lg shadow border-l-4 border-blue-500 text-center">
+                <p class="text-gray-500 text-sm">Titulados en muestra</p>
+                <p id="resTotal" class="text-2xl font-bold text-blue-700">--</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow border-l-4 border-green-500 text-center">
+                <p class="text-gray-500 text-sm">Prob. de interés</p>
+                <p id="resProb" class="text-2xl font-bold text-green-700">--</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow border-l-4 border-cyan-500 text-center">
+                <p class="text-gray-500 text-sm">Simulaciones</p>
+                <p id="resSims" class="text-2xl font-bold text-cyan-700">--</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow border-l-4 border-yellow-500 text-center">
+                <p class="text-gray-500 text-sm">Demanda promedio</p>
+                <p id="resDemanda" class="text-2xl font-bold text-yellow-600">--</p>
+            </div>
+        </div>
+
+        <!-- Intervalo de Confianza -->
+        <div class="bg-white p-6 rounded-lg shadow-md mb-6 text-center border-t-4 border-green-600">
+            <p class="text-3xl font-bold" id="icValor">--</p>
+            <p class="text-sm text-gray-600">IC 95%: <span id="icRango">--</span></p>
+            <p class="text-xs text-gray-500 mt-2" id="icMensaje">--</p>
+        </div>
+
+        <!-- Gráficos -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="font-bold mb-4 text-center text-blue-800">Histograma de Demandas</h3>
+                <canvas id="chartHistograma"></canvas>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="font-bold mb-4 text-center text-cyan-800">Demanda por Área de Interés</h3>
+                <canvas id="chartAreas"></canvas>
+            </div>
+        </div>
+
+        <!-- Tabla de Estadísticas -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+            <div class="bg-yellow-400 text-gray-900 px-4 py-2 font-bold text-sm">Estadísticas de la Simulación</div>
+            <table class="min-w-full text-sm text-left">
+                <tbody id="tablaEstadisticas">
+                    <!-- Se llena con JS -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="text-center mb-10">
+            <a href="index.html" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 transition text-sm">&larr; Volver al inicio</a>
+        </div>
+    </main>
+
+            <script>
+        // Configuración global para que las letras se vean negras
+        Chart.defaults.color = '#111827'; 
+        Chart.defaults.font.size = 12;
+        Chart.defaults.font.family = "'Segoe UI', 'Helvetica', 'Arial', sans-serif";
+
+        let chartHist, chartAreas;
+
+        function ejecutarSimulacion() {
+            const simulaciones = document.getElementById('simulaciones').value;
+            fetch(`/api/analisis/monte-carlo-demanda?simulaciones=${simulaciones}`)
+                .then(res => res.json())
+                .then(data => {
+                    // 1. Tarjetas
+                    document.getElementById('resTotal').innerText = data.total_titulados;
+                    document.getElementById('resProb').innerText = data.probabilidad_interes + "%";
+                    document.getElementById('resSims').innerText = data.simulaciones;
+                    document.getElementById('resDemanda').innerText = data.demanda_promedio;
+
+                    // 2. Aleatorios
+                    document.getElementById('listaAleatorios').innerText = data.primeros_aleatorios.join(", ");
+
+                    // 3. Intervalo de Confianza
+                    document.getElementById('icValor').innerText = `${data.demanda_promedio} ± ${((data.ic_superior - data.ic_inferior) / 2).toFixed(2)}`;
+                    document.getElementById('icRango').innerText = `[${data.ic_inferior}, ${data.ic_superior}]`;
+                    document.getElementById('icMensaje').innerText = `Con un 95% de confianza, la demanda de posgrados estará entre ${data.ic_inferior} y ${data.ic_superior} titulados.`;
+
+                    // 4. Tabla de estadísticas
+                    document.getElementById('tablaEstadisticas').innerHTML = `
+                        <tr class="border-b"><td class="px-4 py-2 font-bold">Demanda promedio</td><td class="px-4 py-2 text-right">${data.demanda_promedio}</td></tr>
+                        <tr class="border-b bg-gray-50"><td class="px-4 py-2 font-bold">Desviación estándar</td><td class="px-4 py-2 text-right">${data.desviacion_estandar}</td></tr>
+                        <tr class="border-b"><td class="px-4 py-2 font-bold">Demanda mínima</td><td class="px-4 py-2 text-right">${data.demanda_minima}</td></tr>
+                        <tr class="border-b bg-gray-50"><td class="px-4 py-2 font-bold">Demanda máxima</td><td class="px-4 py-2 text-right">${data.demanda_maxima}</td></tr>
+                        <tr class="border-b"><td class="px-4 py-2 font-bold">IC 95% Inferior</td><td class="px-4 py-2 text-right">${data.ic_inferior}</td></tr>
+                        <tr><td class="px-4 py-2 font-bold">IC 95% Superior</td><td class="px-4 py-2 text-right">${data.ic_superior}</td></tr>
+                    `;
+
+                    // 5. Gráficos
+                    
+                                        // --- HISTOGRAMA EN FORMA DE CAMPANA ---
+                    const ctxHist = document.getElementById('chartHistograma').getContext('2d');
+                    
+                    const datos = data.histograma_demandas; 
+                    
+                    const min = Math.min(...datos);
+                    const max = Math.max(...datos);
+                    
+                    // Usamos 10 intervalos, pero ajustamos para que las barras se vean bien
+                    const numBins = 10; 
+                    const rango = max - min;
+                    const tamanoBin = rango / numBins;
+
+                    const labelsBins = [];
+                    const frecuencias = [];
+                    
+                    for (let i = 0; i < numBins; i++) {
+                        const limiteInferior = min + (i * tamanoBin);
+                        const limiteSuperior = min + ((i + 1) * tamanoBin);
+                        labelsBins.push(`${Math.round(limiteInferior)}-${Math.round(limiteSuperior)}`);
+                        
+                        const count = datos.filter(d => d >= limiteInferior && d <= limiteSuperior).length;
+                        frecuencias.push(count);
+                    }
+
+                    if (chartHist) chartHist.destroy();
+                    
+                    chartHist = new Chart(ctxHist, {
+                        type: 'bar',
+                        data: {
+                            labels: labelsBins,
+                            datasets: [{
+                                label: 'Frecuencia (Cantidad de simulaciones)',
+                                data: frecuencias,
+                                backgroundColor: '#3B82F6',
+                                borderColor: '#1D4ED8',
+                                borderWidth: 1,
+                                barPercentage: 0.9, // Hace las barras más anchas
+                                categoryPercentage: 1.0
+                            }]
+                        },
+                        options: { 
+                            responsive: true, 
+                            plugins: { 
+                                legend: { display: false },
+                                tooltip: {
+                                    backgroundColor: 'rgba(17, 24, 39, 0.9)',
+                                    callbacks: {
+                                        label: function(context) {
+                                            return `Frecuencia: ${context.raw} simulaciones`;
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                x: { 
+                                    ticks: { color: '#111827', maxRotation: 45, minRotation: 45 },
+                                    grid: { display: false }
+                                },
+                                y: { 
+                                    beginAtZero: true, 
+                                    title: { display: true, text: 'Frecuencia', color: '#111827' },
+                                    ticks: { color: '#111827' },
+                                    grid: { color: '#E5E7EB' }
+                                }
+                            }
+                        }
+                    });
+                    // --- GRÁFICO DE PASTEL POR ÁREA ---
+                    const ctxAreas = document.getElementById('chartAreas').getContext('2d');
+                    if (chartAreas) chartAreas.destroy();
+                    chartAreas = new Chart(ctxAreas, {
+                        type: 'pie',
+                        data: {
+                            labels: Object.keys(data.demanda_por_area),
+                            datasets: [{
+                                data: Object.values(data.demanda_por_area),
+                                backgroundColor: ['#F59E0B', '#3B82F6', '#EF4444'],
+                                borderWidth: 2,
+                                borderColor: '#ffffff'
+                            }]
+                        },
+                        options: { 
+                            responsive: true, 
+                            plugins: { 
+                                legend: { 
+                                    position: 'bottom',
+                                    labels: { color: '#111827', padding: 15, font: { size: 13, weight: 'bold' } }
+                                }
+                            } 
+                        }
+                    });
+                })
+                .catch(err => console.error("Error en simulación:", err));
+        }
+
+        document.addEventListener('DOMContentLoaded', () => ejecutarSimulacion());
+    </script>
+</body>
+</html>

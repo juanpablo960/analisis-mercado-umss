@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Empleadores - UMSS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans min-h-screen">
+
+       <nav class="bg-blue-900 text-white p-4 shadow-md relative z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <!-- Logo / Título -->
+            <h1 class="text-xl font-bold">Sistema de Análisis (ARCUSUR)</h1>
+            
+            <!-- Menú de Navegación -->
+            <div class="flex items-center gap-6 text-sm">
+                
+                <!-- Inicio -->
+                <a href="index.html" class="hover:underline flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    <span>Inicio</span>
+                </a>
+
+                <!-- Dropdown Titulados -->
+                <div class="relative group py-2">
+                    <!-- Si estás en una página de Titulados, agrégale la clase bg-blue-700 px-3 py-1 rounded a este button -->
+                    <button class="hover:underline flex items-center gap-1 focus:outline-none">
+                        Titulados ▼
+                    </button>
+                    <div class="absolute left-0 mt-2 w-56 bg-white text-gray-800 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                        <a href="titulados.html" class="block px-4 py-2 hover:bg-gray-100 rounded-t-md">Dashboard</a>
+                        <a href="lista-titulados.html" class="block px-4 py-2 hover:bg-gray-100">Lista de Titulados</a>
+                        <a href="reportes-dinamicos.html" class="block px-4 py-2 hover:bg-gray-100 font-bold text-blue-600">Reportes Dinámicos</a>
+                        <a href="cruce.html" class="block px-4 py-2 hover:bg-gray-100 font-bold text-yellow-600">Cruce de Datos</a>
+                        <a href="monte-carlo.html" class="block px-4 py-2 hover:bg-gray-100 font-bold text-indigo-600">Simulación Monte Carlo</a>
+                        <a href="tir.html" class="block px-4 py-2 hover:bg-gray-100 rounded-b-md font-bold text-green-600">Simulación TIR</a>
+                    </div>
+                </div>
+
+                <!-- Dropdown Empleadores -->
+                <div class="relative group py-2">
+                    <!-- Si estás en una página de Empleadores, agrégale la clase bg-blue-700 px-3 py-1 rounded a este button -->
+                    <button class="hover:underline flex items-center gap-1 focus:outline-none">
+                        Empleadores ▼
+                    </button>
+                    <div class="absolute left-0 mt-2 w-56 bg-white text-gray-800 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                        <a href="empleadores.html" class="block px-4 py-2 hover:bg-gray-100 rounded-t-md">Dashboard</a>
+                        <a href="lista-empleadores.html" class="block px-4 py-2 hover:bg-gray-100">Lista de Empresas</a>
+                        <a href="reportes-empleadores.html" class="block px-4 py-2 hover:bg-gray-100 font-bold text-green-600">Reportes Dinámicos</a>
+                        <a href="cruce-empleadores.html" class="block px-4 py-2 hover:bg-gray-100 rounded-b-md font-bold text-yellow-600">Cruce de Datos</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto p-6">
+        <h2 class="text-2xl font-semibold mb-6 text-blue-900">Dashboard de Demanda Laboral - Empleadores</h2>
+        
+        <!-- Fila 1: Métricas Generales -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+            <div class="bg-white p-4 rounded-lg shadow border-t-4 border-blue-500 text-center">
+                <p class="text-xs text-gray-600 font-bold uppercase">Total Empresas</p>
+                <p id="kpiTotal" class="text-2xl font-extrabold text-blue-700 mt-1">--</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow border-t-4 border-green-500 text-center">
+                <p class="text-xs text-gray-600 font-bold uppercase">Contrataron (5 años)</p>
+                <p id="kpiContratacion" class="text-2xl font-extrabold text-green-700 mt-1">--</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow border-t-4 border-cyan-500 text-center">
+                <p class="text-xs text-gray-600 font-bold uppercase">Alta Prob. Contratación</p>
+                <p id="kpiAltaProb" class="text-2xl font-extrabold text-cyan-700 mt-1">--</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow border-t-4 border-yellow-500 text-center">
+                <p class="text-xs text-gray-600 font-bold uppercase">Demandan Licenciatura</p>
+                <p id="kpiLicenciatura" class="text-2xl font-extrabold text-yellow-600 mt-1">--</p>
+            </div>
+        </div>
+        
+        <!-- Fila 2: Métricas de Demanda -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <div class="bg-white p-4 rounded-lg shadow border-t-4 border-purple-500 text-center">
+                <p class="text-xs text-gray-600 font-bold uppercase">Demandan Maestría</p>
+                <p id="kpiMaestria" class="text-2xl font-extrabold text-purple-700 mt-1">--</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow border-t-4 border-pink-500 text-center">
+                <p class="text-xs text-gray-600 font-bold uppercase">Sector Privado</p>
+                <p id="kpiPrivado" class="text-2xl font-extrabold text-pink-700 mt-1">--</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow border-t-4 border-indigo-500 text-center">
+                <p class="text-xs text-gray-600 font-bold uppercase">Sector Público</p>
+                <p id="kpiPublico" class="text-2xl font-extrabold text-indigo-700 mt-1">--</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow border-t-4 border-orange-500 text-center">
+                <p class="text-xs text-gray-600 font-bold uppercase">Empresas Grandes</p>
+                <p id="kpiGrandes" class="text-2xl font-extrabold text-orange-700 mt-1">--</p>
+            </div>
+        </div>
+
+        <!-- Gráficos Fila 1 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="font-bold text-lg mb-4 text-center text-green-900">Tipo de Organización</h3>
+                <div class="relative h-72"><canvas id="chartTipo"></canvas></div>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="font-bold text-lg mb-4 text-center text-blue-900">Tamaño de la Empresa</h3>
+                <div class="relative h-72"><canvas id="chartTamano"></canvas></div>
+            </div>
+        </div>
+
+        <!-- Gráficos Fila 2 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="font-bold text-lg mb-4 text-center text-yellow-800">Nivel de Formación Demandado</h3>
+                <div class="relative h-72"><canvas id="chartNivel"></canvas></div>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="font-bold text-lg mb-4 text-center text-cyan-900">Principales Rubros</h3>
+                <div class="relative h-72"><canvas id="chartRubro"></canvas></div>
+            </div>
+        </div>
+
+        <!-- Tabla de Interpretación -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden mb-10">
+            <div class="bg-blue-900 text-white px-4 py-3 font-bold text-lg">Interpretación de Métricas</div>
+            <table class="min-w-full text-sm">
+                <thead class="bg-gray-100 text-gray-700">
+                    <tr>
+                        <th class="py-3 px-4 text-left font-bold">Métrica</th>
+                        <th class="py-3 px-4 text-left font-bold">¿Qué significa?</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaInterpretacion" class="divide-y divide-gray-200">
+                    <!-- Se llena con JS -->
+                </tbody>
+            </table>
+        </div>
+
+    </main>
+
+    <script>
+        Chart.defaults.color = '#111827';
+        Chart.defaults.font.size = 13;
+        Chart.defaults.font.weight = 'bold';
+
+        fetch('/api/analisis/dashboard-empleadores')
+            .then(res => res.json())
+            .then(data => {
+                // Llenar Tarjetas
+                document.getElementById('kpiTotal').innerText = data.total_empleadores;
+                document.getElementById('kpiContratacion').innerText = data.tasa_contratacion + " %";
+                document.getElementById('kpiAltaProb').innerText = data.tasa_alta_probabilidad + " %";
+                document.getElementById('kpiLicenciatura').innerText = data.demanda_licenciatura + " %";
+                document.getElementById('kpiMaestria').innerText = data.demanda_maestria + " %";
+                
+                // Extraer valores de los mapas
+                const privados = data.por_tipo["Privado"] || 0;
+                const publicos = data.por_tipo["Público"] || 0;
+                const grandes = data.por_tamano["Grande"] || 0;
+
+                document.getElementById('kpiPrivado').innerText = privados;
+                document.getElementById('kpiPublico').innerText = publicos;
+                document.getElementById('kpiGrandes').innerText = grandes;
+
+                // Tabla de Interpretación
+                document.getElementById('tablaInterpretacion').innerHTML = `
+                    <tr><td class="py-2 px-4 font-bold">Total Empresas</td><td class="py-2 px-4">Cantidad de empleadores encuestados.</td></tr>
+                    <tr><td class="py-2 px-4 font-bold">Contrataron (5 años)</td><td class="py-2 px-4">Porcentaje de empresas que han contratado Ingenieros de Sistemas en los últimos 5 años.</td></tr>
+                    <tr><td class="py-2 px-4 font-bold">Alta Prob. Contratación</td><td class="py-2 px-4">Porcentaje de empresas que planean contratar en el futuro cercano.</td></tr>
+                    <tr><td class="py-2 px-4 font-bold">Demandan Licenciatura</td><td class="py-2 px-4">Porcentaje de empresas que exigen título de Licenciatura como mínimo.</td></tr>
+                    <tr><td class="py-2 px-4 font-bold">Demandan Maestría</td><td class="py-2 px-4">Porcentaje de empresas que exigen Maestría para contratar.</td></tr>
+                    <tr><td class="py-2 px-4 font-bold">Sector Privado / Público</td><td class="py-2 px-4">Distribución de las empresas según su naturaleza jurídica.</td></tr>
+                    <tr><td class="py-2 px-4 font-bold">Empresas Grandes</td><td class="py-2 px-4">Cantidad de empresas con 100 o más funcionarios (indica el tamaño del mercado).</td></tr>
+                `;
+
+                // Gráficos
+                new Chart(document.getElementById('chartTipo').getContext('2d'), {
+                    type: 'doughnut',
+                    data: { labels: Object.keys(data.por_tipo), datasets: [{ data: Object.values(data.por_tipo), backgroundColor: ['#8B5CF6', '#3B82F6'] }] },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 14, weight: 'bold' } } } } }
+                });
+
+                new Chart(document.getElementById('chartTamano').getContext('2d'), {
+                    type: 'pie',
+                    data: { labels: Object.keys(data.por_tamano), datasets: [{ data: Object.values(data.por_tamano), backgroundColor: ['#10B981', '#F59E0B', '#3B82F6', '#EF4444'] }] },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 14, weight: 'bold' } } } } }
+                });
+
+                new Chart(document.getElementById('chartNivel').getContext('2d'), {
+                    type: 'bar',
+                    data: { labels: Object.keys(data.por_nivel), datasets: [{ label: 'Cantidad', data: Object.values(data.por_nivel), backgroundColor: '#F59E0B' }] },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { font: { size: 12 } } }, y: { beginAtZero: true, ticks: { font: { size: 12 } } } } }
+                });
+
+                new Chart(document.getElementById('chartRubro').getContext('2d'), {
+                    type: 'bar',
+                    data: { labels: Object.keys(data.por_rubro), datasets: [{ label: 'Cantidad', data: Object.values(data.por_rubro), backgroundColor: '#8B5CF6' }] },
+                    options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { font: { size: 12 } } }, y: { ticks: { font: { size: 12 } } } } }
+                });
+            })
+            .catch(err => console.error("Error:", err));
+    </script>
+</body>
+</html>

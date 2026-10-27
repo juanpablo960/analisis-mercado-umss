@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista Filtrada - UMSS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans min-h-screen">
+
+    <nav class="bg-blue-900 text-white p-4 shadow-md">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold">Sistema de Análisis (ARCUSUR)</h1>
+            <a href="reportes-dinamicos.html" class="bg-blue-700 px-3 py-1 rounded text-sm hover:bg-blue-600">&larr; Volver a Reportes</a>
+        </div>
+    </nav>
+
+    <main class="container mx-auto p-6">
+        <h2 class="text-2xl font-semibold mb-2">Lista Filtrada</h2>
+        <p id="descripcionFiltro" class="text-gray-600 mb-6 font-semibold text-blue-700"></p>
+        
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="min-w-full bg-white">
+                    <thead class="bg-gray-800 text-white">
+                        <tr>
+                            <th class="py-3 px-4 text-left">N°</th>
+                            <th class="py-3 px-4 text-left">ID</th>
+                            <th class="py-3 px-4 text-left">Género</th>
+                            <th class="py-3 px-4 text-left">Área de Interés</th>
+                            <th class="py-3 px-4 text-left">Situación Laboral</th>
+                            <th class="py-3 px-4 text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaFiltrada" class="text-gray-700">
+                        <tr><td colspan="6" class="text-center py-4">Cargando...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const categoria = urlParams.get('categoria');
+        const valor = urlParams.get('valor');
+        const filtroGenero = urlParams.get('filtroGenero') || '';
+        const filtroArea = urlParams.get('filtroArea') || '';
+
+        // Mostrar en el título qué se está filtrando
+        document.getElementById('descripcionFiltro').innerText = `Mostrando titulados donde ${categoria}: ${valor}` + 
+            (filtroGenero ? ` | Género: ${filtroGenero}` : '') + 
+            (filtroArea ? ` | Área: ${filtroArea}` : '');
+
+        const apiUrl = `/api/analisis/lista-filtrada?categoria=${encodeURIComponent(categoria)}&valor=${encodeURIComponent(valor)}&filtroGenero=${encodeURIComponent(filtroGenero)}&filtroArea=${encodeURIComponent(filtroArea)}`;
+
+        fetch(apiUrl)
+            .then(res => res.json())
+            .then(data => {
+                const tbody = document.getElementById('tablaFiltrada');
+                tbody.innerHTML = '';
+                
+                if(data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-gray-500">No se encontraron resultados con estos filtros.</td></tr>';
+                    return;
+                }
+
+                let contador = 1;
+                data.forEach(titulado => {
+                    // Resaltamos el estado laboral
+                    let color = "bg-gray-100";
+                    if(titulado.situacion.includes("trabajando")) color = "bg-green-100 text-green-800";
+                    else if(titulado.situacion.includes("NO trabajo")) color = "bg-red-100 text-red-800";
+                    else if(titulado.situacion.includes("emprendimiento")) color = "bg-blue-100 text-blue-800";
+
+                    const fila = document.createElement('tr');
+                    fila.className = "border-b hover:bg-gray-50";
+                    fila.innerHTML = `
+                        <td class="py-2 px-4">${contador}</td>
+                        <td class="py-2 px-4 font-semibold">${titulado.id}</td>
+                        <td class="py-2 px-4">${titulado.genero}</td>
+                        <td class="py-2 px-4">${titulado.area}</td>
+                        <td class="py-2 px-4"><span class="px-2 py-1 rounded text-xs font-bold ${color}">${titulado.situacion}</span></td>
+                        <td class="py-2 px-4 text-center">
+                            <a href="detalle-titulado.html?id=${titulado.id}" class="bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600 transition">Ver Detalle</a>
+                        </td>
+                    `;
+                    tbody.appendChild(fila);
+                    contador++;
+                });
+            })
+            .catch(err => console.error("Error:", err));
+    </script>
+</body>
+</html>

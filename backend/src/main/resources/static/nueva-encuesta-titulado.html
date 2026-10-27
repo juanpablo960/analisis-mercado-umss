@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Encuesta Oficial - Titulados</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans min-h-screen">
+
+        <nav class="bg-blue-900 text-white p-4 shadow-md relative z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <!-- Logo / Título -->
+            <h1 class="text-xl font-bold">Sistema de Análisis (ARCUSUR)</h1>
+            
+            <!-- Menú de Navegación -->
+            <div class="flex items-center gap-6 text-sm">
+                
+                <!-- Inicio -->
+                <a href="index.html" class="hover:underline flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    <span>Inicio</span>
+                </a>
+
+                <!-- Dropdown Titulados -->
+                <div class="relative group py-2">
+                    <!-- Si estás en una página de Titulados, agrégale la clase bg-blue-700 px-3 py-1 rounded a este button -->
+                    <button class="hover:underline flex items-center gap-1 focus:outline-none">
+                        Titulados ▼
+                    </button>
+                    <div class="absolute left-0 mt-2 w-56 bg-white text-gray-800 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                        <a href="titulados.html" class="block px-4 py-2 hover:bg-gray-100 rounded-t-md">Dashboard</a>
+                        <a href="lista-titulados.html" class="block px-4 py-2 hover:bg-gray-100">Lista de Titulados</a>
+                        <a href="reportes-dinamicos.html" class="block px-4 py-2 hover:bg-gray-100 font-bold text-blue-600">Reportes Dinámicos</a>
+                        <a href="cruce.html" class="block px-4 py-2 hover:bg-gray-100 font-bold text-yellow-600">Cruce de Datos</a>
+                        <a href="monte-carlo.html" class="block px-4 py-2 hover:bg-gray-100 font-bold text-indigo-600">Simulación Monte Carlo</a>
+                        <a href="tir.html" class="block px-4 py-2 hover:bg-gray-100 rounded-b-md font-bold text-green-600">Simulación TIR</a>
+                    </div>
+                </div>
+
+                <!-- Dropdown Empleadores -->
+                <div class="relative group py-2">
+                    <!-- Si estás en una página de Empleadores, agrégale la clase bg-blue-700 px-3 py-1 rounded a este button -->
+                    <button class="hover:underline flex items-center gap-1 focus:outline-none">
+                        Empleadores ▼
+                    </button>
+                    <div class="absolute left-0 mt-2 w-56 bg-white text-gray-800 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                        <a href="empleadores.html" class="block px-4 py-2 hover:bg-gray-100 rounded-t-md">Dashboard</a>
+                        <a href="lista-empleadores.html" class="block px-4 py-2 hover:bg-gray-100">Lista de Empresas</a>
+                        <a href="reportes-empleadores.html" class="block px-4 py-2 hover:bg-gray-100 font-bold text-green-600">Reportes Dinámicos</a>
+                        <a href="cruce-empleadores.html" class="block px-4 py-2 hover:bg-gray-100 rounded-b-md font-bold text-yellow-600">Cruce de Datos</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto p-6 max-w-4xl pb-20">
+        <h2 class="text-2xl font-semibold mb-2 text-center text-blue-900">Encuesta de Opinión a Titulados</h2>
+        <p class="text-sm text-gray-600 text-center mb-8">Carrera de Ingeniería en Sistemas - UMSS</p>
+        
+        <form id="formTitulado" class="space-y-6">
+            
+            <!-- 0. DATOS GENERALES -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden border-t-4 border-blue-500">
+                <div class="bg-gray-50 px-4 py-2 font-bold text-blue-800">0. Datos Generales</div>
+                <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-bold mb-1">Edad que tiene actualmente:</label>
+                        <select name="EDAD" class="w-full border rounded p-2">
+                            <option value="19 - 22 años">19 - 22 años</option>
+                            <option value="23 - 26 años">23 - 26 años</option>
+                            <option value="27 - 30 años">27 - 30 años</option>
+                            <option value="31 - 34 años">31 - 34 años</option>
+                            <option value="35 años o más">35 años o más</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-1">Género:</label>
+                        <select name="GÉNERO" class="w-full border rounded p-2">
+                            <option value="Hombre">Hombre</option>
+                            <option value="Mujer">Mujer</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 1. FORMACIÓN COMPLEMENTARIA -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden border-t-4 border-cyan-500">
+                <div class="bg-gray-50 px-4 py-2 font-bold text-cyan-800">1. Formación Complementaria</div>
+                <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-bold mb-1">¿Ha realizado o se encuentra realizando formación complementaria?</label>
+                        <select name="HA REALIZADO O SE ENCUENTRA" class="w-full border rounded p-2">
+                            <option value="SI">Sí</option>
+                            <option value="NO">No</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-1">Nivel máximo alcanzado:</label>
+                        <select name="PROGRAMA DE FORMACIÓN COMPLEMENTARIA" class="w-full border rounded p-2">
+                            <option value="DIPLOMADO">Diplomado</option>
+                            <option value="ESPECIALIDAD">Especialidad</option>
+                            <option value="MAESTRIA">Maestría</option>
+                            <option value="DOCTORADO">Doctorado</option>
+                            <option value="POS DOCTORADO">Pos Doctorado</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-1">¿Dónde cursó el programa?</label>
+                        <select name="DONDE HA CURSADO" class="w-full border rounded p-2">
+                            <option value="ESCUELA UNIVERSITARIA DE POSGRADO (EUPG)">EUPG</option>
+                            <option value="DIRECCIÓN DE POSGRADO FCyT">Dirección de Posgrado FCyT</option>
+                            <option value="UNIVERSIDADES PÚBLICAS NACIONALES">Universidades Públicas</option>
+                            <option value="UNIVERSIDADES PRIVADAS NACIONALES">Universidades Privadas</option>
+                            <option value="UNIVERSIDADES INTERNACIONALES">Universidades Internacionales</option>
+                            <option value="IBNORCA">IBNORCA</option>
+                            <option value="OTRO">Otro</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-bold mb-1">Fuente de financiamiento:</label>
+                        <select name="FUENTE DE FINANCIAMIENTO" class="w-full border rounded p-2">
+                            <option value="FINANCIADO CON RECURSOS PROPIOS">Recursos propios</option>
+                            <option value="TOTAL FINANCIAMIENTO POR MEDIO DE UNA BECA">Beca total</option>
+                            <option value="FINANCIADO PARCIALMENTE POR MEDIO DE UNA BECA">Beca parcial</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-bold mb-1">Nombre del programa:</label>
+                        <input type="text" name="INDIQUE EL NOMBRE DEL PROGRAMA" class="w-full border rounded p-2" placeholder="Ej: Maestría en Ciencia de Datos">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. PREFERENCIAS DE POSGRADO -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden border-t-4 border-yellow-400">
+                <div class="bg-gray-50 px-4 py-2 font-bold text-yellow-700">2. Preferencias de Posgrado</div>
+                <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-bold mb-1">¿Estaría interesado en realizar un posgrado?</label>
+                        <select name="ESTARÍA INTERESADO" class="w-full border rounded p-2">
+                            <option value="SI">Sí</option>
+                            <option value="NO">No</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-1">Área de interés principal:</label>
+                        <select name="EN CUÁL DE LAS SIGUIENTES ÁREAS" class="w-full border rounded p-2">
+                            <option value="IA">Inteligencia Artificial</option>
+                            <option value="Ingeniería de Software">Ingeniería de Software</option>
+                            <option value="Base de Datos">Base de Datos</option>
+                            <option value="Redes de Datos y Seguridad">Redes de Datos y Seguridad</option>
+                            <option value="Robótica">Robótica</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-bold mb-1">¿En qué organización optaría por estudiar?</label>
+                        <select name="EN CASO DE REALIZAR UN ESTUDIO DE POSGRADO" class="w-full border rounded p-2">
+                            <option value="ESCUELA UNIVERSITARIA DE POSGRADO (EUPG)">EUPG</option>
+                            <option value="DIRECCIÓN DE POSGRADO FCyT">Dirección de Posgrado FCyT</option>
+                            <option value="UNIVERSIDADES PÚBLICAS NACIONALES">Universidades Públicas</option>
+                            <option value="UNIVERSIDADES PRIVADAS NACIONALES">Universidades Privadas</option>
+                            <option value="UNIVERSIDADES INTERNACIONALES">Universidades Internacionales</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-bold mb-1">Opinión sobre el posgrado de la FCyT (1 a 4):</label>
+                        <select name="OPINIÓN PERSONAL RESPECTO AL POSGRADO" class="w-full border rounded p-2">
+                            <option value="Totalmente en desacuerdo">1 - Totalmente en desacuerdo</option>
+                            <option value="En desacuerdo">2 - En desacuerdo</option>
+                            <option value="De acuerdo">3 - De acuerdo</option>
+                            <option value="Totalmente de Acuerdo">4 - Totalmente de acuerdo</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. EMPLEABILIDAD -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden border-t-4 border-green-500">
+                <div class="bg-gray-50 px-4 py-2 font-bold text-green-800">3. Empleabilidad</div>
+                <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-bold mb-1">Años de vida profesional:</label>
+                        <input type="number" name="AÑOS DE VIDA PROFESIONAL" class="w-full border rounded p-2" min="0" value="0">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-1">Tiempo total desempleado (años):</label>
+                        <input type="number" name="CANTIDAD CORRESPONDE AL TOTAL DE TIEMPO" class="w-full border rounded p-2" min="0" value="0">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-bold mb-1">Situación Laboral Actual:</label>
+                        <select name="SITUACIÓN LABORAL ACTUAL" class="w-full border rounded p-2">
+                            <option value="Actualmente me encuentro trabajando un una organización">Empleado</option>
+                            <option value="Actualmente NO trabajo">Desempleado</option>
+                            <option value="Actualmente dedico mi tiempo COMPLETO a un emprendimiento propio">Emprendedor</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-bold mb-1">Si no trabaja, ¿cuál es la razón?</label>
+                        <select name="RAZÓN DE DESEMPLEO" class="w-full border rounded p-2">
+                            <option value="Demanda laboral inexistente">Demanda laboral inexistente</option>
+                            <option value="Incumplimiento de requisitos de experiencia previa">Incumplimiento de experiencia previa</option>
+                            <option value="Incumplimiento de requisitos en habilidades específicas">Falta de habilidades específicas</option>
+                            <option value="Red de contactos limitada">Red de contactos limitada</option>
+                            <option value="Problemas de presentación del CV">Problemas de presentación del CV</option>
+                            <option value="Habilidades deficientes en las entrevistas">Habilidades deficientes en entrevistas</option>
+                            <option value="Ofertas laborales con remuneración muy bajas">Remuneración muy baja</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-1">¿Ha tenido algún trabajo antes?</label>
+                        <select name="HA TENIDO ALGÚN TRABAJO ANTES" class="w-full border rounded p-2">
+                            <option value="SI">Sí</option>
+                            <option value="NO">No</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-1">Tiempo para conseguir su primer empleo:</label>
+                        <select name="CUÁNTO TIEMPO SE DEMORÓ" class="w-full border rounded p-2">
+                            <option value="Ya trabajaba antes de titularse">Ya trabajaba antes</option>
+                            <option value="Menos de 1 mes">Menos de 1 mes</option>
+                            <option value="Entre 1 - 4 meses">Entre 1 - 4 meses</option>
+                            <option value="Entre 4 - 8 meses">Entre 4 - 8 meses</option>
+                            <option value="Entre 8 - 12 meses">Entre 8 - 12 meses</option>
+                            <option value="Más de 12 meses">Más de 12 meses</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-bold mb-1">¿En cuántos empleos se ha desempeñado?</label>
+                        <select name="EN CUÁNTOS EMPLEOS" class="w-full border rounded p-2">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="Más de 3">Más de 3</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. SATISFACCIÓN Y COMPETENCIAS -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden border-t-4 border-purple-500">
+                <div class="bg-gray-50 px-4 py-2 font-bold text-purple-800">4. Satisfacción y Competencias</div>
+                <div class="p-4 space-y-4">
+                    <div>
+                        <label class="block text-sm font-bold mb-1">Satisfacción con la formación recibida:</label>
+                        <select name="GRADO DE SATISFACCIÓN" class="w-full border rounded p-2">
+                            <option value="Totalmente en desacuerdo">1 - Totalmente en desacuerdo</option>
+                            <option value="En desacuerdo">2 - En desacuerdo</option>
+                            <option value="De acuerdo">3 - De acuerdo</option>
+                            <option value="Totalmente de Acuerdo">4 - Totalmente de acuerdo</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-1">Concordancia entre formación y requerimientos laborales:</label>
+                        <select name="CONCORDANCIA FORMACIÓN" class="w-full border rounded p-2">
+                            <option value="Totalmente en desacuerdo">1 - Totalmente en desacuerdo</option>
+                            <option value="En desacuerdo">2 - En desacuerdo</option>
+                            <option value="De acuerdo">3 - De acuerdo</option>
+                            <option value="Totalmente de Acuerdo">4 - Totalmente de acuerdo</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. ASPECTOS DE LA CARRERA -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden border-t-4 border-gray-800">
+                <div class="bg-gray-50 px-4 py-2 font-bold text-gray-800">5. Aspectos de la Carrera</div>
+                <div class="p-4 space-y-4">
+                    <div>
+                        <label class="block text-sm font-bold mb-1">¿Qué aspectos resultaron de utilidad? (Selección múltiple)</label>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
+                            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="UTILIDAD_APLICACION" value="La aplicación práctica de conceptos teóricos en proyectos reales."> Aplicación práctica</label>
+                            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="UTILIDAD_PASANTIAS" value="La oportunidad de realizar pasantías o prácticas profesionales."> Pasantías o prácticas</label>
+                            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="UTILIDAD_HABILIDADES" value="El desarrollo de habilidades analíticas y de resolución de problemas."> Habilidades analíticas</label>
+                            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="UTILIDAD_EQUIPOS" value="La colaboración de equipos multidisciplinarios para resolver problemas complejos."> Equipos multidisciplinarios</label>
+                            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="UTILIDAD_HERRAMIENTAS" value="La enseñanza de herramientas y software específico de la industria."> Herramientas de la industria</label>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-1">¿Qué aspectos considera que pueden mejorar?</label>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
+                            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="MEJORA_INTEGRACION" value="Mayor integración de la teoría con aplicaciones prácticas en el plan de estudios."> Mayor integración teoría-práctica</label>
+                            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="MEJORA_EMPRESAS" value="Mayor relacionamiento del estudiante con las empresas."> Mayor relación con empresas</label>
+                            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="MEJORA_HORARIOS" value="La distribución de horarios de clases."> Distribución de horarios</label>
+                            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="MEJORA_ACTUALIZACION" value="Actualización constante del plan de estudios."> Actualización del plan de estudios</label>
+                            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="MEJORA_ESPECIALIZACION" value="Ofrecimiento de más opciones de especialización."> Más especializaciones</label>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-1">5 asignaturas con ventaja competitiva (marque 5):</label>
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
+                            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="VENTAJA_INTRODUCCION" value="Introducción"> Introducción</label>
+                            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="VENTAJA_BD" value="Base de Datos"> Base de Datos</label>
+                            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="VENTAJA_IA" value="Inteligencia Artificial"> Inteligencia Artificial</label>
+                            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="VENTAJA_REDES" value="Redes de Computadora"> Redes de Computadora</label>
+                            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="VENTAJA_ELECTIVAS" value="Electivas"> Electivas</label>
+                            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="VENTAJA_TIS" value="T.I.S."> T.I.S.</label>
+                            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="VENTAJA_BASICAS" value="Básicas (Física, Calculo, Algebras)"> Básicas</label>
+                            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="VENTAJA_GESTION" value="Planificación de Proyectos y Gestión"> Gestión</label>
+                            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="VENTAJA_REDES_AVANZADAS" value="Tecnologia Redes Avanzadas"> Redes Avanzadas</label>
+                        </div>
+                        <div class="mt-2">
+                            <label class="block text-sm font-bold mb-1">Otra asignatura (ventaja):</label>
+                            <input type="text" name="OTRA_ASIGNATURA_VENTAJA" class="w-full border rounded p-2" placeholder="Ej: Analítica">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-1">5 asignaturas poco útiles (marque 5):</label>
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
+                            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="POCO_BASICAS" value="Básicas (Física, Calculo, Algebras)"> Básicas</label>
+                            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="POCO_TV" value="Aplic. Interactivas para Televisión Digital"> Aplic. TV Digital</label>
+                            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="POCO_TELEFONIA" value="Telefonía IP"> Telefonía IP</label>
+                            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="POCO_WEB" value="Web Semánticas"> Web Semánticas</label>
+                            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="POCO_GRAFICACION" value="Graficación por Computadora"> Graficación</label>
+                            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="POCO_ROBOTICA" value="Robótica"> Robótica</label>
+                            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="POCO_TALLER" value="Taller de Programación en Bajo Nivel"> Taller Bajo Nivel</label>
+                            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="POCO_AUTOMATAS" value="Teoría de Autómatas y Leng. Formales"> Autómatas</label>
+                            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="POCO_FUNCIONAL" value="Programación Funcional"> Programación Funcional</label>
+                            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="POCO_GRAFOS" value="Teoría de Grafos"> Teoría de Grafos</label>
+                            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="POCO_CONTABILIDAD" value="Contabilidad Básica"> Contabilidad</label>
+                        </div>
+                        <div class="mt-2">
+                            <label class="block text-sm font-bold mb-1">Otra asignatura (poco útil):</label>
+                            <input type="text" name="OTRA_ASIGNATURA_POCO_UTIL" class="w-full border rounded p-2" placeholder="Ej: Costos">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. CONTACTO -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden border-t-4 border-indigo-500">
+                <div class="bg-gray-50 px-4 py-2 font-bold text-indigo-800">6. Red de Contactos</div>
+                <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-bold mb-1">¿Le interesaría formar parte de la red de contactos oficial?</label>
+                        <select name="LE INTERESARÍA FORMAR PARTE" class="w-full border rounded p-2">
+                            <option value="SI">Sí</option>
+                            <option value="NO">No</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-1">Email de contacto:</label>
+                        <input type="email" name="EMAIL DE CONTACTO" class="w-full border rounded p-2" placeholder="correo@ejemplo.com">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-1">Número telefónico (WhatsApp):</label>
+                        <input type="text" name="NÚMERO TELEFÓNICO" class="w-full border rounded p-2" placeholder="Ej: 77712345">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-bold mb-1">Link de LinkedIn:</label>
+                        <input type="text" name="LINK DE LINKEDIN" class="w-full border rounded p-2" placeholder="https://linkedin.com/in/tuperfil">
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-4 pb-10">
+                <button type="submit" class="w-full bg-blue-700 text-white py-4 rounded-lg hover:bg-blue-800 transition font-bold text-xl shadow-lg">
+                    Enviar Encuesta Completa
+                </button>
+            </div>
+        </form>
+    </main>
+
+    <script>
+        document.getElementById('formTitulado').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const respuestas = {};
+            
+            // Procesar los checkboxes múltiples
+            formData.forEach((value, key) => {
+                if (respuestas[key]) {
+                    respuestas[key] += "; " + value;
+                } else {
+                    respuestas[key] = value;
+                }
+            });
+
+            fetch('/api/analisis/guardar-titulado', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(respuestas)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.mensaje) {
+                    alert("¡Encuesta guardada exitosamente! Serás redirigido a la lista.");
+                    window.location.href = 'lista-titulados.html';
+                } else {
+                    alert("Error: " + data.error);
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Error de conexión con el servidor.");
+            });
+        });
+    </script>
+</body>
+</html>

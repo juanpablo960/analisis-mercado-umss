@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Encuesta Oficial - Empleadores</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans min-h-screen">
+
+        <nav class="bg-blue-900 text-white p-4 shadow-md relative z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <!-- Logo / Título -->
+            <h1 class="text-xl font-bold">Sistema de Análisis (ARCUSUR)</h1>
+            
+            <!-- Menú de Navegación -->
+            <div class="flex items-center gap-6 text-sm">
+                
+                <!-- Inicio -->
+                <a href="index.html" class="hover:underline flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    <span>Inicio</span>
+                </a>
+
+                <!-- Dropdown Titulados -->
+                <div class="relative group py-2">
+                    <!-- Si estás en una página de Titulados, agrégale la clase bg-blue-700 px-3 py-1 rounded a este button -->
+                    <button class="hover:underline flex items-center gap-1 focus:outline-none">
+                        Titulados ▼
+                    </button>
+                    <div class="absolute left-0 mt-2 w-56 bg-white text-gray-800 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                        <a href="titulados.html" class="block px-4 py-2 hover:bg-gray-100 rounded-t-md">Dashboard</a>
+                        <a href="lista-titulados.html" class="block px-4 py-2 hover:bg-gray-100">Lista de Titulados</a>
+                        <a href="reportes-dinamicos.html" class="block px-4 py-2 hover:bg-gray-100 font-bold text-blue-600">Reportes Dinámicos</a>
+                        <a href="cruce.html" class="block px-4 py-2 hover:bg-gray-100 font-bold text-yellow-600">Cruce de Datos</a>
+                        <a href="monte-carlo.html" class="block px-4 py-2 hover:bg-gray-100 font-bold text-indigo-600">Simulación Monte Carlo</a>
+                        <a href="tir.html" class="block px-4 py-2 hover:bg-gray-100 rounded-b-md font-bold text-green-600">Simulación TIR</a>
+                    </div>
+                </div>
+
+                <!-- Dropdown Empleadores -->
+                <div class="relative group py-2">
+                    <!-- Si estás en una página de Empleadores, agrégale la clase bg-blue-700 px-3 py-1 rounded a este button -->
+                    <button class="hover:underline flex items-center gap-1 focus:outline-none">
+                        Empleadores ▼
+                    </button>
+                    <div class="absolute left-0 mt-2 w-56 bg-white text-gray-800 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                        <a href="empleadores.html" class="block px-4 py-2 hover:bg-gray-100 rounded-t-md">Dashboard</a>
+                        <a href="lista-empleadores.html" class="block px-4 py-2 hover:bg-gray-100">Lista de Empresas</a>
+                        <a href="reportes-empleadores.html" class="block px-4 py-2 hover:bg-gray-100 font-bold text-green-600">Reportes Dinámicos</a>
+                        <a href="cruce-empleadores.html" class="block px-4 py-2 hover:bg-gray-100 rounded-b-md font-bold text-yellow-600">Cruce de Datos</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto p-6 max-w-4xl pb-20">
+        <h2 class="text-2xl font-semibold mb-2 text-center text-green-900">Encuesta a Empleadores</h2>
+        <p class="text-sm text-gray-600 text-center mb-8">Carrera de Ingeniería de Sistemas - UMSS</p>
+        
+        <form id="formEmpleador" class="space-y-6">
+            
+            <!-- 1. DATOS DE LA ORGANIZACIÓN -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden border-t-4 border-green-600">
+                <div class="bg-green-50 px-4 py-2 font-bold text-green-800">1. Datos de la Organización</div>
+                <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-bold mb-1">Correo electrónico *</label>
+                        <input type="email" name="CORREO" class="w-full border rounded p-2" required placeholder="correo@empresa.com">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-bold mb-1">Nombre de la Empresa o Institución *</label>
+                        <input type="text" name="NOMBRE DE LA EMPRESA" class="w-full border rounded p-2" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-1">Tipo de organización:</label>
+                        <select name="TIPO DE ORGANIZACIÓN" class="w-full border rounded p-2">
+                            <option value="Privado">Privado</option>
+                            <option value="Público">Público</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-1">Tamaño de la organización:</label>
+                        <select name="TAMAÑO DE LA ORGANIZACIÓN" class="w-full border rounded p-2">
+                            <option value="Grande (100 funcionarios o más)">Grande (100+)</option>
+                            <option value="Mediana (entre 31 a 99 funcionarios)">Mediana (31-99)</option>
+                            <option value="Pequeña (entre 11 a 30 funcionarios)">Pequeña (11-30)</option>
+                            <option value="Micro (hasta 10 funcionarios)">Micro (1-10)</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-bold mb-1">Rubro o sector principal:</label>
+                        <select name="RUBRO O SECTOR PRINCIPAL" class="w-full border rounded p-2">
+                            <option value="Desarrollo de software">Desarrollo de software</option>
+                            <option value="Servicios de tecnologías de información (TI)">Servicios de TI</option>
+                            <option value="Telecomunicaciones y redes">Telecomunicaciones y redes</option>
+                            <option value="Soporte técnico y mantenimiento de sistemas">Soporte técnico</option>
+                            <option value="Consultoría en sistemas / transformación digital">Consultoría</option>
+                            <option value="Banca y servicios financieros">Banca y servicios financieros</option>
+                            <option value="Instituciones públicas / gobierno">Instituciones públicas</option>
+                            <option value="Educación e investigación">Educación e investigación</option>
+                            <option value="Industria y manufactura">Industria y manufactura</option>
+                            <option value="Comercio y comercio electrónico">Comercio electrónico</option>
+                            <option value="Salud">Salud</option>
+                            <option value="Seguridad informática / ciberseguridad">Ciberseguridad</option>
+                            <option value="Análisis de datos / inteligencia de negocios">Análisis de datos</option>
+                            <option value="Startups o emprendimientos tecnológicos">Startups</option>
+                            <option value="Otros">Otros</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. EMPLEABILIDAD -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden border-t-4 border-blue-500">
+                <div class="bg-blue-50 px-4 py-2 font-bold text-blue-800">2. Empleabilidad</div>
+                <div class="p-4 space-y-4">
+                    <div>
+                        <label class="block text-sm font-bold mb-1">¿La organización ha contratado Ingenieros de Sistemas en los últimos 5 años?</label>
+                        <select name="HA CONTRATADO INGENIEROS" class="w-full border rounded p-2">
+                            <option value="SI">Sí</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-1">¿Existe la posibilidad de incorporar Ingenieros de Sistemas?</label>
+                        <select name="POSIBILIDAD DE INCORPORAR" class="w-full border rounded p-2">
+                            <option value="Sí, existe una alta probabilidad de contratación">Alta probabilidad</option>
+                            <option value="Sí, dependiendo del crecimiento o nuevos proyectos de la organización">Depende del crecimiento</option>
+                            <option value="No se tiene prevista la contratación actualmente">No prevista</option>
+                            <option value="No requiere profesionales del área de Sistemas">No requiere</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-1">Nivel de formación académica demandado:</label>
+                        <select name="NIVEL DE FORMACIÓN ACADÉMICA" class="w-full border rounded p-2">
+                            <option value="Licenciatura">Licenciatura</option>
+                            <option value="Diplomado">Diplomado</option>
+                            <option value="Especialidad">Especialidad</option>
+                            <option value="Maestría">Maestría</option>
+                            <option value="Doctorado">Doctorado</option>
+                            <option value="Post- doctorado">Post-doctorado</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-1">Medio de convocatoria:</label>
+                        <select name="TRAVÉS DE QUÉ MEDIO CONVOCA" class="w-full border rounded p-2">
+                            <option value="Medios escritos y audiovisuales">Medios escritos y audiovisuales</option>
+                            <option value="Internet y Redes sociales">Internet y Redes sociales</option>
+                            <option value="Postulación competitiva (convocatorias públicas y privadas)">Postulación competitiva</option>
+                            <option value="Oferta profesional personal">Oferta profesional personal</option>
+                            <option value="Recomendación de terceros">Recomendación de terceros</option>
+                            <option value="Otros">Otros</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-1">Cargos que desempeñan (Selección múltiple):</label>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
+                            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="CARGO_APOYO" value="De apoyo / asistencia tecnológica"> De apoyo / asistencia</label>
+                            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="CARGO_TECNICO" value="Técnico (desarrollo de software, administración de sistemas, redes, bases de datos, soporte TI)"> Técnico</label>
+                            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="CARGO_ANALISTA" value="Analista (sistemas, datos, procesos o soluciones tecnológicas)"> Analista</label>
+                            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="CARGO_ESPECIALISTA" value="Especialista (ciberseguridad, arquitectura de software, infraestructura tecnológica)"> Especialista</label>
+                            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="CARGO_SUPERVISOR" value="Supervisor / Coordinador de área tecnológica"> Supervisor / Coordinador</label>
+                            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="CARGO_GERENCIAL" value="Jefatura o Gerencial (gestión de proyectos, dirección de TI, transformación digital)"> Jefatura / Gerencial</label>
+                            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="CARGO_CONSULTOR" value="Consultor tecnológico"> Consultor tecnológico</label>
+                        </div>
+                        <div class="mt-2">
+                            <label class="block text-sm font-bold mb-1">Otro cargo:</label>
+                            <input type="text" name="OTRO_CARGO" class="w-full border rounded p-2" placeholder="Especifique otro cargo">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. TENDENCIAS Y COMPETENCIAS -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden border-t-4 border-yellow-400">
+                <div class="bg-yellow-50 px-4 py-2 font-bold text-yellow-700">3. Tendencias y Competencias</div>
+                <div class="p-4 space-y-4">
+                    <div>
+                        <label class="block text-sm font-bold mb-1">¿Qué nuevas áreas de conocimiento o tecnologías considera importantes?</label>
+                        <textarea name="QUÉ NUEVAS ÁREAS DE CONOCIMIENTO" class="w-full border rounded p-2" rows="2"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-1">¿Qué nuevas herramientas tecnológicas debería manejar el profesional?</label>
+                        <textarea name="CUÁLES SON LAS NUEVAS HERRAMIENTAS" class="w-full border rounded p-2" rows="2"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-1">¿Qué habilidades, competencias y destrezas son fundamentales?</label>
+                        <textarea name="HABILIDADES, COMPETENCIAS Y DESTREZAS" class="w-full border rounded p-2" rows="2"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. FORMACIÓN Y PERFIL PROFESIONAL (MATRIZ LIKERT 1) -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden border-t-4 border-purple-500">
+                <div class="bg-purple-50 px-4 py-2 font-bold text-purple-800">4. Formación y Perfil Profesional</div>
+                <div class="p-4 space-y-6">
+                    <div>
+                        <p class="text-sm font-semibold mb-2">La Carrera brinda confianza como formadora de profesionales.</p>
+                        <select name="BRINDA CONFIANZA A NUESTRA ORGANIZACIÓN" class="w-full border rounded p-2 text-sm">
+                            <option value="Totalmente de acuerdo">Totalmente de acuerdo</option>
+                            <option value="Parcialmente de acuerdo">Parcialmente de acuerdo</option>
+                            <option value="Totalmente desacuerdo">Totalmente desacuerdo</option>
+                            <option value="No sabe">No sabe</option>
+                        </select>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold mb-2">El título profesional es consistente con las competencias demostradas.</p>
+                        <select name="TÍTULO PROFESIONAL OTORGADO" class="w-full border rounded p-2 text-sm">
+                            <option value="Totalmente de acuerdo">Totalmente de acuerdo</option>
+                            <option value="Parcialmente de acuerdo">Parcialmente de acuerdo</option>
+                            <option value="Totalmente desacuerdo">Totalmente desacuerdo</option>
+                            <option value="No sabe">No sabe</option>
+                        </select>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold mb-2">Las autoridades de la Carrera consultan nuestra opinión como empleadores.</p>
+                        <select name="AUTORIDADES DE LA CARRERA DE INGENIERÍA" class="w-full border rounded p-2 text-sm">
+                            <option value="Totalmente de acuerdo">Totalmente de acuerdo</option>
+                            <option value="Parcialmente de acuerdo">Parcialmente de acuerdo</option>
+                            <option value="Totalmente desacuerdo">Totalmente desacuerdo</option>
+                            <option value="No sabe">No sabe</option>
+                        </select>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold mb-2">Conozco el perfil profesional y las competencias de egreso declaradas.</p>
+                        <select name="CONOZCO EL PERFIL PROFESIONAL" class="w-full border rounded p-2 text-sm">
+                            <option value="Totalmente de acuerdo">Totalmente de acuerdo</option>
+                            <option value="Parcialmente de acuerdo">Parcialmente de acuerdo</option>
+                            <option value="Totalmente desacuerdo">Totalmente desacuerdo</option>
+                            <option value="No sabe">No sabe</option>
+                        </select>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold mb-2">El perfil profesional declarado es coherente con el desempeño laboral.</p>
+                        <select name="PERFIL PROFESIONAL DECLARADO" class="w-full border rounded p-2 text-sm">
+                            <option value="Totalmente de acuerdo">Totalmente de acuerdo</option>
+                            <option value="Parcialmente de acuerdo">Parcialmente de acuerdo</option>
+                            <option value="Totalmente desacuerdo">Totalmente desacuerdo</option>
+                            <option value="No sabe">No sabe</option>
+                        </select>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold mb-2">La formación permite a los titulados alcanzar un desempeño destacado.</p>
+                        <select name="FORMACIÓN PERMITE ALCANZAR DESEMPEÑO" class="w-full border rounded p-2 text-sm">
+                            <option value="Totalmente de acuerdo">Totalmente de acuerdo</option>
+                            <option value="Parcialmente de acuerdo">Parcialmente de acuerdo</option>
+                            <option value="Totalmente desacuerdo">Totalmente desacuerdo</option>
+                            <option value="No sabe">No sabe</option>
+                        </select>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold mb-2">La Carrera considera nuestra opinión e incorpora las necesidades del sector laboral.</p>
+                        <select name="CARRERA CONSIDERA OPINIÓN" class="w-full border rounded p-2 text-sm">
+                            <option value="Totalmente de acuerdo">Totalmente de acuerdo</option>
+                            <option value="Parcialmente de acuerdo">Parcialmente de acuerdo</option>
+                            <option value="Totalmente desacuerdo">Totalmente desacuerdo</option>
+                            <option value="No sabe">No sabe</option>
+                        </select>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold mb-2">El desempeño evidencia competencias laborales (comunicación, análisis, etc.).</p>
+                        <select name="DESEMPEÑO EVIDENCIA COMPETENCIAS" class="w-full border rounded p-2 text-sm">
+                            <option value="Totalmente de acuerdo">Totalmente de acuerdo</option>
+                            <option value="Parcialmente de acuerdo">Parcialmente de acuerdo</option>
+                            <option value="Totalmente desacuerdo">Totalmente desacuerdo</option>
+                            <option value="No sabe">No sabe</option>
+                        </select>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold mb-2">Los profesionales demuestran valores y actitudes éticas.</p>
+                        <select name="DEMUESTRAN VALORES Y ACTITUDES" class="w-full border rounded p-2 text-sm">
+                            <option value="Totalmente de acuerdo">Totalmente de acuerdo</option>
+                            <option value="Parcialmente de acuerdo">Parcialmente de acuerdo</option>
+                            <option value="Totalmente desacuerdo">Totalmente desacuerdo</option>
+                            <option value="No sabe">No sabe</option>
+                        </select>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold mb-2">He participado en procesos de recopilación de información para la Carrera.</p>
+                        <select name="HE PARTICIPADO EN RECOPILACIÓN" class="w-full border rounded p-2 text-sm">
+                            <option value="Totalmente de acuerdo">Totalmente de acuerdo</option>
+                            <option value="Parcialmente de acuerdo">Parcialmente de acuerdo</option>
+                            <option value="Totalmente desacuerdo">Totalmente desacuerdo</option>
+                            <option value="No sabe">No sabe</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. RELACIÓN CON LA ORGANIZACIÓN (MATRIZ LIKERT 2) -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden border-t-4 border-gray-700">
+                <div class="bg-gray-100 px-4 py-2 font-bold text-gray-800">5. Relación de la Carrera con la Organización</div>
+                <div class="p-4 space-y-6">
+                    <div>
+                        <p class="text-sm font-semibold mb-2">La Carrera mantiene vínculos que generan oportunidades laborales.</p>
+                        <select name="MANTIENE VÍNCULOS CON ORGANIZACIONES" class="w-full border rounded p-2 text-sm">
+                            <option value="Totalmente de acuerdo">Totalmente de acuerdo</option>
+                            <option value="Parcialmente de acuerdo">Parcialmente de acuerdo</option>
+                            <option value="Totalmente desacuerdo">Totalmente desacuerdo</option>
+                            <option value="No sabe">No sabe</option>
+                        </select>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold mb-2">He participado en actividades de vinculación con el entorno laboral.</p>
+                        <select name="HE PARTICIPADO EN ACTIVIDADES DE VINCULACIÓN" class="w-full border rounded p-2 text-sm">
+                            <option value="Totalmente de acuerdo">Totalmente de acuerdo</option>
+                            <option value="Parcialmente de acuerdo">Parcialmente de acuerdo</option>
+                            <option value="Totalmente desacuerdo">Totalmente desacuerdo</option>
+                            <option value="No sabe">No sabe</option>
+                        </select>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold mb-2">He participado en difusión de oportunidades laborales, pasantías, etc.</p>
+                        <select name="HE PARTICIPADO EN DIFUSIÓN" class="w-full border rounded p-2 text-sm">
+                            <option value="Totalmente de acuerdo">Totalmente de acuerdo</option>
+                            <option value="Parcialmente de acuerdo">Parcialmente de acuerdo</option>
+                            <option value="Totalmente desacuerdo">Totalmente desacuerdo</option>
+                            <option value="No sabe">No sabe</option>
+                        </select>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold mb-2">He participado en actividades de intercambio de conocimientos con la Carrera.</p>
+                        <select name="HE PARTICIPADO EN INTERCAMBIO" class="w-full border rounded p-2 text-sm">
+                            <option value="Totalmente de acuerdo">Totalmente de acuerdo</option>
+                            <option value="Parcialmente de acuerdo">Parcialmente de acuerdo</option>
+                            <option value="Totalmente desacuerdo">Totalmente desacuerdo</option>
+                            <option value="No sabe">No sabe</option>
+                        </select>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold mb-2">Como empleador, he sido consultado sobre el desempeño de los titulados.</p>
+                        <select name="HE SIDO CONSULTADO SOBRE DESEMPEÑO" class="w-full border rounded p-2 text-sm">
+                            <option value="Totalmente de acuerdo">Totalmente de acuerdo</option>
+                            <option value="Parcialmente de acuerdo">Parcialmente de acuerdo</option>
+                            <option value="Totalmente desacuerdo">Totalmente desacuerdo</option>
+                            <option value="No sabe">No sabe</option>
+                        </select>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold mb-2">La Carrera ha consultado nuestra opinión sobre la pertinencia de la formación.</p>
+                        <select name="HA CONSULTADO OPINIÓN PERTINENCIA" class="w-full border rounded p-2 text-sm">
+                            <option value="Totalmente de acuerdo">Totalmente de acuerdo</option>
+                            <option value="Parcialmente de acuerdo">Parcialmente de acuerdo</option>
+                            <option value="Totalmente desacuerdo">Totalmente desacuerdo</option>
+                            <option value="No sabe">No sabe</option>
+                        </select>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold mb-2">Cuando requerimos profesionales, recurrimos a la UMSS.</p>
+                        <select name="RECURRIMOS A LA UNIVERSIDAD MAYOR DE SAN SIMÓN" class="w-full border rounded p-2 text-sm">
+                            <option value="Totalmente de acuerdo">Totalmente de acuerdo</option>
+                            <option value="Parcialmente de acuerdo">Parcialmente de acuerdo</option>
+                            <option value="Totalmente desacuerdo">Totalmente desacuerdo</option>
+                            <option value="No sabe">No sabe</option>
+                        </select>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold mb-2">He sido consultado periódicamente por la Carrera en sus procesos de autoevaluación.</p>
+                        <select name="HE SIDO CONSULTADO PERIÓDICAMENTE" class="w-full border rounded p-2 text-sm">
+                            <option value="Totalmente de acuerdo">Totalmente de acuerdo</option>
+                            <option value="Parcialmente de acuerdo">Parcialmente de acuerdo</option>
+                            <option value="Totalmente desacuerdo">Totalmente desacuerdo</option>
+                            <option value="No sabe">No sabe</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-4 pb-10">
+                <button type="submit" class="w-full bg-green-700 text-white py-4 rounded-lg hover:bg-green-800 transition font-bold text-xl shadow-lg">
+                    Enviar Encuesta Completa
+                </button>
+            </div>
+        </form>
+    </main>
+
+    <script>
+        document.getElementById('formEmpleador').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const respuestas = {};
+            
+            formData.forEach((value, key) => {
+                if (respuestas[key]) {
+                    respuestas[key] += "; " + value;
+                } else {
+                    respuestas[key] = value;
+                }
+            });
+
+            fetch('/api/analisis/guardar-empleador', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(respuestas)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.mensaje) {
+                    alert("¡Empresa registrada exitosamente! Serás redirigido a la lista.");
+                    window.location.href = 'lista-empleadores.html';
+                } else {
+                    alert("Error: " + data.error);
+                }
+            })
+            .catch(err => { alert("Error de conexión"); });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es"> 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis de Mercado - UMSS</title>
+    <!-- Importamos Tailwind CSS para que se vea bonito sin escribir mucho CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans min-h-screen flex flex-col">
+
+    <!-- Barra de Navegación -->
+         <nav class="bg-blue-900 text-white p-4 shadow-md relative z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <!-- Logo / Título -->
+            <h1 class="text-xl font-bold">Sistema de Análisis (ARCUSUR)</h1>
+            
+            <!-- Menú de Navegación -->
+            <div class="flex items-center gap-6 text-sm">
+                
+                <!-- Inicio -->
+                <a href="index.html" class="hover:underline flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    <span>Inicio</span>
+                </a>
+
+                <!-- Dropdown Titulados -->
+                <div class="relative group py-2">
+                    <!-- Si estás en una página de Titulados, agrégale la clase bg-blue-700 px-3 py-1 rounded a este button -->
+                    <button class="hover:underline flex items-center gap-1 focus:outline-none">
+                        Titulados ▼
+                    </button>
+                    <div class="absolute left-0 mt-2 w-56 bg-white text-gray-800 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                        <a href="titulados.html" class="block px-4 py-2 hover:bg-gray-100 rounded-t-md">Dashboard</a>
+                        <a href="lista-titulados.html" class="block px-4 py-2 hover:bg-gray-100">Lista de Titulados</a>
+                        <a href="reportes-dinamicos.html" class="block px-4 py-2 hover:bg-gray-100 font-bold text-blue-600">Reportes Dinámicos</a>
+                        <a href="cruce.html" class="block px-4 py-2 hover:bg-gray-100 font-bold text-yellow-600">Cruce de Datos</a>
+                        <a href="monte-carlo.html" class="block px-4 py-2 hover:bg-gray-100 font-bold text-indigo-600">Simulación Monte Carlo</a>
+                        <a href="tir.html" class="block px-4 py-2 hover:bg-gray-100 rounded-b-md font-bold text-green-600">Simulación TIR</a>
+                    </div>
+                </div>
+
+                <!-- Dropdown Empleadores -->
+                <div class="relative group py-2">
+                    <!-- Si estás en una página de Empleadores, agrégale la clase bg-blue-700 px-3 py-1 rounded a este button -->
+                    <button class="hover:underline flex items-center gap-1 focus:outline-none">
+                        Empleadores ▼
+                    </button>
+                    <div class="absolute left-0 mt-2 w-56 bg-white text-gray-800 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                        <a href="empleadores.html" class="block px-4 py-2 hover:bg-gray-100 rounded-t-md">Dashboard</a>
+                        <a href="lista-empleadores.html" class="block px-4 py-2 hover:bg-gray-100">Lista de Empresas</a>
+                        <a href="reportes-empleadores.html" class="block px-4 py-2 hover:bg-gray-100 font-bold text-green-600">Reportes Dinámicos</a>
+                        <a href="cruce-empleadores.html" class="block px-4 py-2 hover:bg-gray-100 rounded-b-md font-bold text-yellow-600">Cruce de Datos</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav> 
+
+    <!-- Contenido Principal -->
+    <main class="container mx-auto p-6 flex-grow">
+        <h2 class="text-2xl font-semibold mb-6 text-center">Carga de Datos Oficiales</h2>
+
+                <!-- Tarjetas de Resumen (Contadores) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-10">
+            <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-blue-500 flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm font-semibold uppercase tracking-wide">Titulados Registrados</p>
+                    <p id="totalTitulados" class="text-4xl font-bold text-blue-700 mt-2">0</p>
+                </div>
+                <div class="bg-blue-100 p-3 rounded-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-green-500 flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm font-semibold uppercase tracking-wide">Empleadores Registrados</p>
+                    <p id="totalEmpleadores" class="text-4xl font-bold text-green-700 mt-2">0</p>
+                </div>
+                <div class="bg-green-100 p-3 rounded-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            <!-- Tarjeta de Titulados -->
+            <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-blue-500">
+                <h3 class="text-lg font-bold mb-2">1. Encuesta a Titulados</h3>
+                <p class="text-sm text-gray-600 mb-4">Sube el archivo Excel con las respuestas de los profesionales titulados.</p>
+                
+                <input type="file" id="fileTitulados" accept=".xlsx, .xls" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 mb-4"/>
+                
+                <button onclick="subirExcel('titulados')" class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition">Procesar Titulados</button>
+                <p id="statusTitulados" class="mt-2 text-sm text-center"></p>
+            </div>
+
+            <!-- Tarjeta de Empleadores -->
+            <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-green-500">
+                <h3 class="text-lg font-bold mb-2">2. Encuesta a Empleadores</h3>
+                <p class="text-sm text-gray-600 mb-4">Sube el archivo Excel con las respuestas de las empresas.</p>
+                
+                <input type="file" id="fileEmpleadores" accept=".xlsx, .xls" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 mb-4"/>
+                
+                <button onclick="subirExcel('empleadores')" class="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 transition">Procesar Empleadores</button>
+                <p id="statusEmpleadores" class="mt-2 text-sm text-center"></p>
+            </div>
+
+        </div>
+
+        <!-- Botón para ir al Dashboard (se habilitará luego) -->
+        <div class="mt-10 text-center">
+            <a href="dashboard.html" class="inline-block bg-gray-800 text-white px-6 py-3 rounded-lg hover:bg-gray-900 transition">
+                Ir al Dashboard de Resultados &rarr;
+            </a>
+        </div>
+    </main>
+
+    <!-- Lógica JavaScript para subir los archivos -->
+    <script>
+        async function subirExcel(tipo) {
+            const input = document.getElementById(`file${tipo.charAt(0).toUpperCase() + tipo.slice(1)}`);
+            const status = document.getElementById(`status${tipo.charAt(0).toUpperCase() + tipo.slice(1)}`);
+            
+            if (!input.files[0]) {
+                status.textContent = "Por favor, selecciona un archivo primero.";
+                status.className = "mt-2 text-sm text-center text-red-500";
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("file", input.files[0]);
+
+            status.textContent = "Procesando archivo...";
+            status.className = "mt-2 text-sm text-center text-blue-500";
+
+            try {
+                const response = await fetch(`/api/upload/${tipo}`, {
+                    method: "POST",
+                    body: formData
+                });
+
+                const mensaje = await response.text();
+                
+                if (response.ok) {
+                    status.textContent = mensaje;
+                    status.className = "mt-2 text-sm text-center text-green-600 font-bold";
+                    input.value = ""; // Limpiar input
+                } else {
+                    status.textContent = "Error: " + mensaje;
+                    status.className = "mt-2 text-sm text-center text-red-500";
+                }
+            } catch (error) {
+                status.textContent = "Error de conexión con el servidor.";
+                status.className = "mt-2 text-sm text-center text-red-500";
+            }
+        }
+
+    </script>
+        <script>
+        // Cargar contadores totales al iniciar la página
+        fetch('/api/analisis/resumen-totales')
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('totalTitulados').innerText = data.total_titulados;
+                document.getElementById('totalEmpleadores').innerText = data.total_empleadores;
+            })
+            .catch(err => console.error("Error cargando totales:", err));
+    </script>
+</body>
+</html>

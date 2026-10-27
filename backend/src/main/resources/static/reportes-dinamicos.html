@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Reportes Dinámicos - UMSS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans min-h-screen">
+
+        <nav class="bg-blue-900 text-white p-4 shadow-md relative z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <!-- Logo / Título -->
+            <h1 class="text-xl font-bold">Sistema de Análisis (ARCUSUR)</h1>
+            
+            <!-- Menú de Navegación -->
+            <div class="flex items-center gap-6 text-sm">
+                
+                <!-- Inicio -->
+                <a href="index.html" class="hover:underline flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    <span>Inicio</span>
+                </a>
+
+                <!-- Dropdown Titulados -->
+                <div class="relative group py-2">
+                    <!-- Si estás en una página de Titulados, agrégale la clase bg-blue-700 px-3 py-1 rounded a este button -->
+                    <button class="hover:underline flex items-center gap-1 focus:outline-none">
+                        Titulados ▼
+                    </button>
+                    <div class="absolute left-0 mt-2 w-56 bg-white text-gray-800 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                        <a href="titulados.html" class="block px-4 py-2 hover:bg-gray-100 rounded-t-md">Dashboard</a>
+                        <a href="lista-titulados.html" class="block px-4 py-2 hover:bg-gray-100">Lista de Titulados</a>
+                        <a href="reportes-dinamicos.html" class="block px-4 py-2 hover:bg-gray-100 font-bold text-blue-600">Reportes Dinámicos</a>
+                        <a href="cruce.html" class="block px-4 py-2 hover:bg-gray-100 font-bold text-yellow-600">Cruce de Datos</a>
+                        <a href="monte-carlo.html" class="block px-4 py-2 hover:bg-gray-100 font-bold text-indigo-600">Simulación Monte Carlo</a>
+                        <a href="tir.html" class="block px-4 py-2 hover:bg-gray-100 rounded-b-md font-bold text-green-600">Simulación TIR</a>
+                    </div>
+                </div>
+
+                <!-- Dropdown Empleadores -->
+                <div class="relative group py-2">
+                    <!-- Si estás en una página de Empleadores, agrégale la clase bg-blue-700 px-3 py-1 rounded a este button -->
+                    <button class="hover:underline flex items-center gap-1 focus:outline-none">
+                        Empleadores ▼
+                    </button>
+                    <div class="absolute left-0 mt-2 w-56 bg-white text-gray-800 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                        <a href="empleadores.html" class="block px-4 py-2 hover:bg-gray-100 rounded-t-md">Dashboard</a>
+                        <a href="lista-empleadores.html" class="block px-4 py-2 hover:bg-gray-100">Lista de Empresas</a>
+                        <a href="reportes-empleadores.html" class="block px-4 py-2 hover:bg-gray-100 font-bold text-green-600">Reportes Dinámicos</a>
+                        <a href="cruce-empleadores.html" class="block px-4 py-2 hover:bg-gray-100 rounded-b-md font-bold text-yellow-600">Cruce de Datos</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto p-6">
+        <h2 class="text-2xl font-semibold mb-2">Reportes Dinámicos de Titulados</h2>
+        <p class="text-gray-600 mb-6 text-sm">Analiza los datos aplicando filtros personalizados en tiempo real.</p>
+
+        <!-- Panel de Filtros -->
+        <div class="bg-white p-4 rounded-lg shadow-md mb-8 border-t-4 border-blue-500">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                <div>
+                    <label class="block text-sm font-bold mb-1">Género</label>
+                    <select id="filtroGenero" class="w-full border rounded p-2">
+                        <option value="">Todos</option>
+                        <option value="Hombre">Hombre</option>
+                        <option value="Mujer">Mujer</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold mb-1">Área de Interés</label>
+                    <select id="filtroArea" class="w-full border rounded p-2">
+                        <option value="">Todas</option>
+                        <option value="IA">Inteligencia Artificial</option>
+                        <option value="Ingenieria de Software">Ingeniería de Software</option>
+                        <option value="Redes de Datos y Seguridad">Redes y Seguridad</option>
+                        <option value="Base de Datos">Base de Datos</option>
+                        <option value="Robotica">Robótica</option>
+                    </select>
+                </div>
+                <div class="md:col-span-2 flex gap-2">
+                    <button onclick="aplicarFiltros()" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition w-full font-bold">
+                        Generar Reporte
+                    </button>
+                    <button onclick="limpiarFiltros()" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition">
+                        Limpiar
+                    </button>
+                </div>
+            </div>
+            <p id="resultadoTotal" class="mt-4 text-sm font-bold text-blue-700 bg-blue-50 p-2 rounded inline-block">
+                Cargando resultados...
+            </p>
+        </div>
+
+        <!-- Cuadrícula de Gráficos -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                    <!-- Gráfico 1: Género -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="font-bold mb-4 text-center text-blue-800">Distribución por Género</h3>
+                <canvas id="chartGenero"></canvas>
+                <div id="tablaGenero"></div> <!-- Aquí se insertará la tabla -->
+            </div>
+
+            <!-- Gráfico 2: Área -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="font-bold mb-4 text-center text-blue-800">Distribución por Área de Interés</h3>
+                <canvas id="chartArea"></canvas>
+                <div id="tablaArea"></div>
+            </div>
+
+            <!-- Gráfico 3: Situación Laboral -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="font-bold mb-4 text-center text-blue-800">Situación Laboral Actual</h3>
+                <canvas id="chartSituacion"></canvas>
+                <div id="tablaSituacion"></div>
+            </div>
+
+            <!-- Gráfico 4: Tiempo para primer empleo -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="font-bold mb-4 text-center text-blue-800">Inserción Laboral (Tiempo 1er Empleo)</h3>
+                <canvas id="chartTiempo"></canvas>
+                <div id="tablaTiempo"></div>
+            </div>
+            
+            <!-- Gráfico 5: Formación Complementaria -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="font-bold mb-4 text-center text-blue-800">Formación Complementaria</h3>
+                <canvas id="chartFormacion"></canvas>
+                <div id="tablaFormacion"></div>
+            </div>
+            
+            <!-- Gráfico 6: Nivel de formación alcanzado -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="font-bold mb-4 text-center text-blue-800">Nivel Máximo de Formación Alcanzado</h3>
+                <canvas id="chartNivel"></canvas>
+                <div id="tablaNivel"></div>
+            </div>    
+            
+        
+    </main>
+
+    <script>
+        // Variables globales para guardar los gráficos y poder destruirlos al actualizar
+        let charts = {};
+
+                 function crearGrafico(id, tipo, dataObj, colores, nombreColumna) {
+            if (charts[id]) { charts[id].destroy(); } 
+            
+            const labels = Object.keys(dataObj);
+            const values = Object.values(dataObj);
+            const total = values.reduce((a, b) => a + b, 0);
+
+            // 1. Gráfico
+            Chart.defaults.color = '#1F2937';
+            Chart.defaults.font.size = 12;
+            
+            charts[id] = new Chart(document.getElementById(id).getContext('2d'), {
+                type: tipo,
+                data: {
+                    labels: labels,
+                    datasets: [{ data: values, backgroundColor: colores, borderWidth: 2, borderColor: '#ffffff' }]
+                },
+                options: { 
+                    responsive: true, maintainAspectRatio: true,
+                    plugins: { legend: { position: 'bottom' }, tooltip: { backgroundColor: 'rgba(17, 24, 39, 0.9)' } },
+                    scales: tipo === 'bar' ? { y: { beginAtZero: true } } : {}
+                }
+            });
+
+            // 2. Tabla con botón Ver
+            const tablaId = id.replace('chart', 'tabla');
+            const tablaContenedor = document.getElementById(tablaId);
+            
+            if (tablaContenedor) {
+                // Obtenemos los filtros actuales del panel superior
+                const filtroGen = document.getElementById('filtroGenero').value;
+                const filtroAre = document.getElementById('filtroArea').value;
+
+                let htmlTabla = `
+                    <table class="min-w-full text-sm text-left mt-4">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-100">
+                            <tr>
+                                <th class="px-2 py-2">Categoría</th>
+                                <th class="px-2 py-2 text-center">Cantidad</th>
+                                <th class="px-2 py-2 text-center">Porcentaje</th>
+                                <th class="px-2 py-2 text-center">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                labels.forEach((label, index) => {
+                    const cantidad = values[index];
+                    const porcentaje = total > 0 ? ((cantidad / total) * 100).toFixed(2) : 0;
+                    const color = colores[index % colores.length];
+
+                    // Construimos la URL para filtrar la lista
+                    const urlFiltro = `lista-filtrada-view.html?categoria=${encodeURIComponent(nombreColumna)}&valor=${encodeURIComponent(label)}&filtroGenero=${encodeURIComponent(filtroGen)}&filtroArea=${encodeURIComponent(filtroAre)}`;
+
+                    htmlTabla += `
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="px-2 py-2 flex items-center gap-2">
+                                <span style="display:inline-block; width:12px; height:12px; border-radius:50%; background-color:${color};"></span>
+                                ${label}
+                            </td>
+                            <td class="px-2 py-2 text-center font-semibold">${cantidad}</td>
+                            <td class="px-2 py-2 text-center">
+                                <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-1 rounded">
+                                    ${porcentaje}%
+                                </span>
+                            </td>
+                            <td class="px-2 py-2 text-center">
+                                <a href="${urlFiltro}" class="bg-blue-500 text-white px-3 py-1 rounded text-xs hover:bg-blue-600 transition">
+                                    Ver
+                                </a>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                htmlTabla += `</tbody></table>`;
+                tablaContenedor.innerHTML = htmlTabla;
+            }
+        }
+
+                
+
+                function aplicarFiltros() {
+            const genero = document.getElementById('filtroGenero').value;
+            const area = document.getElementById('filtroArea').value;
+            
+            const url = `/api/analisis/reportes-dinamicos?genero=${encodeURIComponent(genero)}&area=${encodeURIComponent(area)}`;
+            
+            fetch(url).then(res => res.json()).then(data => {
+                document.getElementById('resultadoTotal').innerText = `Resultados: ${data.total_filtrados} titulados encontrados`;
+                
+                // El 5to parámetro es la columna real en el JSON
+                crearGrafico('chartGenero', 'doughnut', data.por_genero, ['#3B82F6', '#EC4899'], 'GÉNERO');
+                crearGrafico('chartArea', 'pie', data.por_area, ['#3B82F6', '#F59E0B', '#10B981', '#8B5CF6', '#EF4444'], 'EN CUÁL DE LAS SIGUIENTES ÁREAS');
+                crearGrafico('chartSituacion', 'pie', data.por_situacion, ['#10B981', '#EF4444', '#F59E0B'], 'SITUACIÓN LABORAL');
+                crearGrafico('chartTiempo', 'bar', data.por_tiempo_empleo, ['#3B82F6', '#EC4899', '#F59E0B', '#14B8A6'], 'CUÁNTO TIEMPO SE DEMORÓ');
+                crearGrafico('chartFormacion', 'pie', data.por_formacion, ['#10B981', '#EF4444'], 'HA REALIZADO O SE ENCUENTRA');
+                crearGrafico('chartNivel', 'bar', data.por_nivel_alcanzado, ['#F59E0B', '#EF4444', '#3B82F6', '#14B8A6'], 'PROGRAMA DE FORMACIÓN COMPLEMENTARIA');
+            });
+        }
+        function limpiarFiltros() {
+            document.getElementById('filtroGenero').value = '';
+            document.getElementById('filtroArea').value = '';
+            aplicarFiltros();
+        }
+
+        // Cargar todos los datos al iniciar la página
+        document.addEventListener('DOMContentLoaded', () => {
+            aplicarFiltros();
+        });
+    </script>
+</body>
+</html>

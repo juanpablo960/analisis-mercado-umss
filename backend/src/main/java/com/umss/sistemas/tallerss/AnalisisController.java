@@ -1311,4 +1311,234 @@ public class AnalisisController {
         resultado.put("esperados", espPorcentaje);
         return resultado;
     }
+        // 30. Análisis Univariado (Frecuencias y Medidas)
+    @GetMapping("/univariado")
+    public Map<String, Object> getUnivariado(@RequestParam(defaultValue = "GÉNERO") String variable) {
+        List<Titulado> titulados = tituladoRepository.findAll();
+        
+        Map<String, Long> frecuencias = new LinkedHashMap<>();
+        List<Double> valoresNumericos = new ArrayList<>();
+        
+        for (Titulado t : titulados) {
+            String valor = getValor(t, variable);
+            if (!valor.equals("N/A")) {
+                frecuencias.merge(valor, 1L, Long::sum);
+                
+                // Intentar convertir a número para medidas estadísticas
+                                // Intentar convertir a número SOLO si la variable parece numérica
+                               // Convertir valores a número SOLO si la variable es numérica
+                if (variable.toUpperCase().contains("EDAD") || 
+                    variable.toUpperCase().contains("AÑOS") || 
+                    variable.toUpperCase().contains("TIEMPO") ||
+                    variable.toUpperCase().contains("CANTIDAD")) {
+                    try {
+                        double num = 0;
+                        // Lógica especial para rangos de edad
+                        if (variable.toUpperCase().contains("EDAD")) {
+                            if (valor.contains("19 - 22")) num = 20.5;
+                            else if (valor.contains("23 - 26")) num = 24.5;
+                            else if (valor.contains("27 - 30")) num = 28.5;
+                            else if (valor.contains("31 - 34")) num = 32.5;
+                            else if (valor.contains("35")) num = 37.0;
+                        } else {
+                            // Para otras variables, extraer el número directamente
+                            String numStr = valor.replaceAll("[^0-9.]", "");
+                            if (!numStr.isEmpty()) num = Double.parseDouble(numStr);
+                        }
+                        
+                        if (num > 0) valoresNumericos.add(num);
+                    } catch (Exception e) {}
+                }
+            }
+        }
+
+        Map<String, Object> medidas = new HashMap<>();
+        if (!valoresNumericos.isEmpty()) {
+            DoubleSummaryStatistics stats = valoresNumericos.stream().mapToDouble(Double::doubleValue).summaryStatistics();
+            medidas.put("media", Math.round(stats.getAverage() * 100.0) / 100.0);
+            medidas.put("min", stats.getMin());
+            medidas.put("max", stats.getMax());
+            medidas.put("rango", stats.getMax() - stats.getMin());
+            
+            // Mediana
+            Collections.sort(valoresNumericos);
+            double mediana = valoresNumericos.get(valoresNumericos.size() / 2);
+            medidas.put("mediana", Math.round(mediana * 100.0) / 100.0);
+            
+            // Desviación estándar
+            double varianza = 0;
+            for (double v : valoresNumericos) varianza += Math.pow(v - stats.getAverage(), 2);
+            double desv = Math.sqrt(varianza / valoresNumericos.size());
+            medidas.put("desviacion", Math.round(desv * 100.0) / 100.0);
+            
+            // Moda
+            String moda = frecuencias.entrySet().stream()
+                .max(Map.Entry.comparingByValue()).map(Map.Entry::getKey).orElse("N/A");
+            medidas.put("moda", moda);
+        }
+
+        Map<String, Object> resultado = new HashMap<>();
+        resultado.put("variable", variable);
+        resultado.put("frecuencias", frecuencias);
+        resultado.put("medidas", medidas);
+        resultado.put("total", titulados.size());
+        
+        return resultado;
+    }
+
+        // 31. Análisis Univariado para Empleadores
+    @GetMapping("/univariado-empleadores")
+    public Map<String, Object> getUnivariadoEmpleadores(@RequestParam(defaultValue = "TIPO DE ORGANIZACIÓN") String variable) {
+        List<Empleador> empleadores = empleadorRepository.findAll();
+        
+        Map<String, Long> frecuencias = new LinkedHashMap<>();
+        List<Double> valoresNumericos = new ArrayList<>();
+        
+        for (Empleador e : empleadores) {
+            String valor = getValorEmpleador(e, variable);
+            if (!valor.equals("N/A")) {
+                frecuencias.merge(valor, 1L, Long::sum);
+                
+                // Intentar convertir a número SOLO si la variable parece numérica
+                if (variable.toUpperCase().contains("CANTIDAD") || 
+                variable.toUpperCase().contains("AÑOS") ||
+                variable.toUpperCase().contains("NÚMERO")) {
+                    try {
+                        String numStr = valor.replaceAll("[^0-9.]", "");
+                        if (!numStr.isEmpty()) {
+                            valoresNumericos.add(Double.parseDouble(numStr));
+                        }
+                    } catch (Exception ex) {}
+                }
+            }
+        }
+
+        Map<String, Object> medidas = new HashMap<>();
+        if (!valoresNumericos.isEmpty()) {
+            DoubleSummaryStatistics stats = valoresNumericos.stream().mapToDouble(Double::doubleValue).summaryStatistics();
+            medidas.put("media", Math.round(stats.getAverage() * 100.0) / 100.0);
+            medidas.put("min", stats.getMin());
+            medidas.put("max", stats.getMax());
+            medidas.put("rango", stats.getMax() - stats.getMin());
+            
+            Collections.sort(valoresNumericos);
+            medidas.put("mediana", Math.round(valoresNumericos.get(valoresNumericos.size() / 2) * 100.0) / 100.0);
+            
+            double varianza = 0;
+            for (double v : valoresNumericos) varianza += Math.pow(v - stats.getAverage(), 2);
+            medidas.put("desviacion", Math.round(Math.sqrt(varianza / valoresNumericos.size()) * 100.0) / 100.0);
+            
+            String moda = frecuencias.entrySet().stream()
+                .max(Map.Entry.comparingByValue()).map(Map.Entry::getKey).orElse("N/A");
+            medidas.put("moda", moda);
+        }
+
+        Map<String, Object> resultado = new HashMap<>();
+        resultado.put("variable", variable);
+        resultado.put("frecuencias", frecuencias);
+        resultado.put("medidas", medidas);
+        resultado.put("total", empleadores.size());
+        
+        return resultado;
+    }
+
+           // 32. Tablas de Frecuencia Globales (Titulados)
+    @GetMapping("/tablas-frecuencia-titulados")
+    public Map<String, Object> getTablasFrecuenciaTitulados() {
+        List<Titulado> titulados = tituladoRepository.findAll();
+        Map<String, Object> resultado = new HashMap<>();
+        
+        String[] variables = {
+            "GÉNERO", 
+            "EDAD", 
+            "EN CUÁL DE LAS SIGUIENTES ÁREAS", 
+            "SITUACIÓN LABORAL ACTUAL",
+            "PROGRAMA DE FORMACIÓN COMPLEMENTARIA",
+            "HA REALIZADO O SE ENCUENTRA"
+        };
+
+        for (String var : variables) {
+            Map<String, Long> frecuencias = new LinkedHashMap<>();
+            for (Titulado t : titulados) {
+                String valor = getValor(t, var);
+                if (valor == null || valor.trim().isEmpty() || valor.equals("N/A")) {
+                    valor = "No especificado";
+                }
+                frecuencias.merge(valor, 1L, Long::sum);
+            }
+            
+            // Calcular acumuladas
+            Map<String, Long> absAcum = new LinkedHashMap<>();
+            Map<String, Double> relAcum = new LinkedHashMap<>();
+            long acumAbs = 0;
+            double acumRel = 0;
+            long total = frecuencias.values().stream().mapToLong(Long::longValue).sum();
+            
+            for (Map.Entry<String, Long> entry : frecuencias.entrySet()) {
+                acumAbs += entry.getValue();
+                double rel = total > 0 ? ((double) entry.getValue() / total) * 100 : 0;
+                acumRel += rel;
+                absAcum.put(entry.getKey(), acumAbs);
+                relAcum.put(entry.getKey(), Math.round(acumRel * 100.0) / 100.0);
+            }
+            
+            Map<String, Object> datosVar = new HashMap<>();
+            datosVar.put("frecuencias", frecuencias);
+            datosVar.put("abs_acum", absAcum);
+            datosVar.put("rel_acum", relAcum);
+            resultado.put(var, datosVar);
+        }
+        
+        return resultado;
+    }
+
+        // 33. Tablas de Frecuencia Globales (Empleadores)
+    @GetMapping("/tablas-frecuencia-empleadores")
+    public Map<String, Object> getTablasFrecuenciaEmpleadores() {
+        List<Empleador> empleadores = empleadorRepository.findAll();
+        Map<String, Object> resultado = new HashMap<>();
+        
+        String[] variables = {
+            "TIPO DE ORGANIZACIÓN",
+            "TAMAÑO DE LA ORGANIZACIÓN",
+            "RUBRO O SECTOR PRINCIPAL",
+            "NIVEL DE FORMACIÓN ACADÉMICA",
+            "HA CONTRATADO INGENIEROS",
+            "POSIBILIDAD DE INCORPORAR"
+        };
+
+        for (String var : variables) {
+            Map<String, Long> frecuencias = new LinkedHashMap<>();
+            for (Empleador e : empleadores) {
+                String valor = getValorEmpleador(e, var);
+                if (valor == null || valor.trim().isEmpty() || valor.equals("N/A")) {
+                    valor = "No especificado";
+                }
+                frecuencias.merge(valor, 1L, Long::sum);
+            }
+            
+            // Calcular acumuladas
+            Map<String, Long> absAcum = new LinkedHashMap<>();
+            Map<String, Double> relAcum = new LinkedHashMap<>();
+            long acumAbs = 0;
+            double acumRel = 0;
+            long total = frecuencias.values().stream().mapToLong(Long::longValue).sum();
+            
+            for (Map.Entry<String, Long> entry : frecuencias.entrySet()) {
+                acumAbs += entry.getValue();
+                double rel = total > 0 ? ((double) entry.getValue() / total) * 100 : 0;
+                acumRel += rel;
+                absAcum.put(entry.getKey(), acumAbs);
+                relAcum.put(entry.getKey(), Math.round(acumRel * 100.0) / 100.0);
+            }
+            
+            Map<String, Object> datosVar = new HashMap<>();
+            datosVar.put("frecuencias", frecuencias);
+            datosVar.put("abs_acum", absAcum);
+            datosVar.put("rel_acum", relAcum);
+            resultado.put(var, datosVar);
+        }
+        
+        return resultado;
+    }
 }

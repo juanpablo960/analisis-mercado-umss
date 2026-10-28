@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Análisis Univariado - UMSS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans min-h-screen">
+
+    <nav class="bg-blue-900 text-white p-4 shadow-md">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold">Sistema de Análisis (ARCUSUR)</h1>
+            <a href="index.html" class="text-sm hover:underline">Inicio</a>
+        </div>
+    </nav>
+
+    <main class="container mx-auto p-6 max-w-5xl">
+        <h2 class="text-2xl font-bold mb-2">Análisis Univariado</h2>
+        <p class="text-gray-600 mb-6 text-sm">Explora la distribución y las medidas estadísticas de cada variable.</p>
+
+        <!-- Selector de Variable -->
+        <div class="bg-white p-4 rounded-lg shadow-md mb-6 border-t-4 border-blue-500">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-bold mb-1">Selecciona una variable:</label>
+                    <select id="variable" class="w-full border rounded p-2">
+                        <option value="GÉNERO">Género</option>
+                        <option value="EDAD">Edad</option>
+                        <option value="EN CUÁL DE LAS SIGUIENTES ÁREAS">Área de Interés (Posgrado)</option>
+                        <option value="SITUACIÓN LABORAL ACTUAL">Situación Laboral</option>
+                        <option value="PROGRAMA DE FORMACIÓN COMPLEMENTARIA">Nivel de Formación Complementaria</option>
+                        <option value="FUENTE DE FINANCIAMIENTO">Fuente de Financiamiento</option>
+                        <option value="CUÁNTO TIEMPO SE DEMORÓ">Tiempo para 1er Empleo</option>
+                        <option value="EN CUÁNTOS EMPLEOS">Número de Empleos</option>
+                        <option value="AÑOS DE VIDA PROFESIONAL">Años de Vida Profesional</option>
+                    </select>
+                </div>
+                <div>
+                    <button onclick="analizar()" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition w-full font-bold shadow">
+                        📊 Analizar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Medidas Estadísticas (solo para variables numéricas) -->
+        <div id="panelMedidas" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 hidden">
+            <div class="bg-white p-4 rounded-lg shadow text-center border-l-4 border-blue-500">
+                <p class="text-xs text-gray-500 font-bold uppercase">Media</p>
+                <p id="mMedia" class="text-2xl font-bold text-blue-700">--</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow text-center border-l-4 border-green-500">
+                <p class="text-xs text-gray-500 font-bold uppercase">Mediana</p>
+                <p id="mMediana" class="text-2xl font-bold text-green-700">--</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow text-center border-l-4 border-purple-500">
+                <p class="text-xs text-gray-500 font-bold uppercase">Desv. Estándar</p>
+                <p id="mDesviacion" class="text-2xl font-bold text-purple-700">--</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow text-center border-l-4 border-red-500">
+                <p class="text-xs text-gray-500 font-bold uppercase">Mínimo</p>
+                <p id="mMin" class="text-2xl font-bold text-red-700">--</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow text-center border-l-4 border-pink-500">
+                <p class="text-xs text-gray-500 font-bold uppercase">Máximo</p>
+                <p id="mMax" class="text-2xl font-bold text-pink-700">--</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow text-center border-l-4 border-indigo-500">
+                <p class="text-xs text-gray-500 font-bold uppercase">Rango</p>
+                <p id="mRango" class="text-2xl font-bold text-indigo-700">--</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow text-center border-l-4 border-yellow-500">
+                <p class="text-xs text-gray-500 font-bold uppercase">Moda</p>
+                <p id="mModa" class="text-2xl font-bold text-yellow-600">--</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow text-center border-l-4 border-teal-500">
+                <p class="text-xs text-gray-500 font-bold uppercase">Total Registros</p>
+                <p id="mTotal" class="text-2xl font-bold text-teal-700">--</p>
+            </div>
+        </div>
+
+        <!-- Gráfico y Tabla -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="font-bold mb-4 text-center text-blue-900">Distribución de Frecuencias</h3>
+                <div class="relative h-80"><canvas id="chartFrecuencias"></canvas></div>
+            </div>
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="bg-gray-800 text-white px-4 py-2 font-bold">Tabla de Frecuencias</div>
+                <div class="overflow-y-auto max-h-80">
+                    <table class="min-w-full text-sm">
+                        <thead class="bg-gray-100 text-gray-700 sticky top-0">
+                            <tr>
+                                <th class="px-4 py-2 text-left">Categoría</th>
+                                <th class="px-4 py-2 text-center">Frecuencia Absoluta</th>
+                                <th class="px-4 py-2 text-center">Frecuencia Relativa (%)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaFrecuencias" class="divide-y divide-gray-200"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        Chart.defaults.color = '#111827';
+        let chartFrec;
+
+                function analizar() {
+            const variable = document.getElementById('variable').value;
+            
+            fetch(`/api/analisis/univariado?variable=${encodeURIComponent(variable)}`)
+                .then(res => res.json())
+                .then(data => {
+                    // 1. Panel de medidas (solo si la variable es numérica)
+                    const panel = document.getElementById('panelMedidas');
+                    const esNumerica = data.medidas.media !== undefined && !isNaN(data.medidas.media);
+                    
+                    if (esNumerica) {
+                        panel.classList.remove('hidden');
+                        document.getElementById('mMedia').innerText = data.medidas.media;
+                        document.getElementById('mMediana').innerText = data.medidas.mediana;
+                        document.getElementById('mDesviacion').innerText = data.medidas.desviacion;
+                        document.getElementById('mMin').innerText = data.medidas.min;
+                        document.getElementById('mMax').innerText = data.medidas.max;
+                        document.getElementById('mRango').innerText = data.medidas.rango;
+                        document.getElementById('mModa').innerText = data.medidas.moda;
+                        document.getElementById('mTotal').innerText = data.total;
+                    } else {
+                        panel.classList.add('hidden');
+                    }
+
+                    // 2. Tabla de frecuencias
+                    const total = Object.values(data.frecuencias).reduce((a, b) => a + b, 0);
+                    let html = '';
+                    Object.entries(data.frecuencias).forEach(([key, val]) => {
+                        const porcentaje = ((val / total) * 100).toFixed(2);
+                        html += `
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-4 py-2">${key}</td>
+                                <td class="px-4 py-2 text-center font-semibold">${val}</td>
+                                <td class="px-4 py-2 text-center">
+                                    <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-bold">${porcentaje}%</span>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                    document.getElementById('tablaFrecuencias').innerHTML = html;
+
+                    // 3. Gráfico de barras (siempre)
+                    if (chartFrec) chartFrec.destroy();
+                    
+                    chartFrec = new Chart(document.getElementById('chartFrecuencias').getContext('2d'), {
+                        type: 'bar',
+                        data: {
+                            labels: Object.keys(data.frecuencias),
+                            datasets: [{
+                                label: 'Frecuencia',
+                                data: Object.values(data.frecuencias),
+                                backgroundColor: '#3B82F6'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { 
+                                legend: { display: false },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            const val = context.raw || 0;
+                                            const pct = ((val / total) * 100).toFixed(2);
+                                            return `${val} (${pct}%)`;
+                                        }
+                                    }
+                                }
+                            },
+                            scales: { y: { beginAtZero: true } }
+                        }
+                    });
+                })
+                .catch(err => console.error("Error:", err));
+        }
+
+        document.addEventListener('DOMContentLoaded', analizar);
+    </script>
+</body>
+</html>

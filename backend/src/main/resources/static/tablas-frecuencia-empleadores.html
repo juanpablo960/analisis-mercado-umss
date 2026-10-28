@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Tablas de Frecuencia Empleadores - UMSS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans min-h-screen">
+
+    <nav class="bg-blue-900 text-white p-4 shadow-md">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold">Sistema de Análisis (ARCUSUR)</h1>
+            <a href="index.html" class="text-sm hover:underline">Inicio</a>
+        </div>
+    </nav>
+
+    <main class="container mx-auto p-6 max-w-6xl">
+        <h2 class="text-2xl font-bold mb-2">Tablas de Frecuencia - Empleadores</h2>
+        <p class="text-gray-600 mb-6 text-sm">Distribución de frecuencias absolutas, relativas y acumuladas de las variables clave del sector empleador.</p>
+
+        <div id="contenedorTablas" class="space-y-8">
+            <!-- Se llena con JS -->
+        </div>
+    </main>
+
+    <script>
+        fetch('/api/analisis/tablas-frecuencia-empleadores')
+            .then(res => res.json())
+            .then(data => {
+                const contenedor = document.getElementById('contenedorTablas');
+                let html = '';
+                
+                const titulos = {
+                    "TIPO DE ORGANIZACIÓN": "Tipo de Organización",
+                    "TAMAÑO DE LA ORGANIZACIÓN": "Tamaño de la Empresa",
+                    "RUBRO O SECTOR PRINCIPAL": "Rubro o Sector",
+                    "NIVEL DE FORMACIÓN ACADÉMICA": "Nivel de Formación Demandado",
+                    "HA CONTRATADO INGENIEROS": "¿Contrató en últimos 5 años?",
+                    "POSIBILIDAD DE INCORPORAR": "Posibilidad de Contratar"
+                };
+
+                for (const [varName, varData] of Object.entries(data)) {
+                    const frecuencias = varData.frecuencias;
+                    const absAcum = varData.abs_acum;
+                    const relAcum = varData.rel_acum;
+                    const total = Object.values(frecuencias).reduce((a, b) => a + b, 0);
+
+                    let filas = '';
+                    for (const [key, val] of Object.entries(frecuencias)) {
+                        const porcentaje = ((val / total) * 100).toFixed(2);
+                        filas += `
+                            <tr class="hover:bg-gray-50 border-b">
+                                <td class="px-4 py-2">${key}</td>
+                                <td class="px-4 py-2 text-center font-semibold">${val}</td>
+                                <td class="px-4 py-2 text-center">
+                                    <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-bold">${porcentaje}%</span>
+                                </td>
+                                <td class="px-4 py-2 text-center">${absAcum[key]}</td>
+                                <td class="px-4 py-2 text-center">
+                                    <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-xs font-bold">${relAcum[key]}%</span>
+                                </td>
+                            </tr>
+                        `;
+                    }
+
+                    html += `
+                        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                            <div class="bg-green-600 text-white px-4 py-2 font-bold">${titulos[varName] || varName}</div>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full text-sm">
+                                    <thead class="bg-gray-100 text-gray-700">
+                                        <tr>
+                                            <th class="px-4 py-2 text-left">Categoría</th>
+                                            <th class="px-4 py-2 text-center">fi (Absoluta)</th>
+                                            <th class="px-4 py-2 text-center">hi (%)</th>
+                                            <th class="px-4 py-2 text-center">Fi (Acumulada)</th>
+                                            <th class="px-4 py-2 text-center">Hi (%)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>${filas}</tbody>
+                                </table>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                contenedor.innerHTML = html;
+            })
+            .catch(err => console.error("Error:", err));
+    </script>
+</body>
+</html>

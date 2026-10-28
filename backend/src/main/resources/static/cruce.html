@@ -158,6 +158,10 @@
                 </div>
             </div>
             <div id="cajaConclusion" class="m-4 p-4 rounded text-center font-bold text-sm"></div>
+                        <!-- INTERPRETACIÓN AUTOMÁTICA (PEGAR AQUÍ) -->
+            <div id="cajaInterpretacion" class="m-4 p-4 rounded text-sm border">
+                Cargando interpretación...
+            </div>
         </div>
 
         <div class="text-center mb-10">
@@ -243,6 +247,19 @@
                     caja.className = data.es_independiente 
                         ? "m-4 p-4 rounded text-center font-bold text-sm bg-green-100 text-green-800 border border-green-300" 
                         : "m-4 p-4 rounded text-center font-bold text-sm bg-red-100 text-red-800 border border-red-300";
+
+                                        // INTERPRETACIÓN AUTOMÁTICA (VERSIÓN CORTA)
+                const cajaInterp = document.getElementById('cajaInterpretacion');
+                let interpretacion = "";
+                
+                if (data.es_independiente) {
+                    interpretacion = `✅ <strong>Conclusión:</strong> No hay relación entre las variables. Las preferencias son independientes (no hay sesgo).`;
+                    cajaInterp.className = "m-4 p-4 rounded text-sm bg-green-50 text-green-900 border border-green-300 text-center font-semibold";
+                } else {
+                    interpretacion = `⚠️ <strong>Conclusión:</strong> Sí hay relación entre las variables. Existe un patrón o dependencia que debe analizarse.`;
+                    cajaInterp.className = "m-4 p-4 rounded text-sm bg-red-50 text-red-900 border border-red-300 text-center font-semibold";
+                }
+                cajaInterp.innerHTML = interpretacion;
                 })
                 .catch(err => console.error("Error:", err));
         }

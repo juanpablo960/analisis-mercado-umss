@@ -1192,4 +1192,123 @@ public class AnalisisController {
 
         return resultado;
     }
+
+        // 28. Datos para el Gráfico de Radar (Empleadores)
+    @GetMapping("/radar-empleadores")
+    public Map<String, Object> getRadarEmpleadores(
+            @RequestParam(defaultValue = "TIPO DE ORGANIZACIÓN") String variable1,
+            @RequestParam(defaultValue = "NIVEL DE FORMACIÓN ACADÉMICA") String variable2) {
+
+        List<Empleador> empleadores = empleadorRepository.findAll();
+        
+        Set<String> filas = new TreeSet<>();
+        Set<String> columnas = new TreeSet<>();
+        Map<String, Map<String, Integer>> matriz = new HashMap<>();
+
+        for (Empleador e : empleadores) {
+            String v1 = getValorEmpleador(e, variable1);
+            String v2 = getValorEmpleador(e, variable2);
+            if (!v1.equals("N/A") && !v2.equals("N/A")) {
+                filas.add(v1);
+                columnas.add(v2);
+                matriz.computeIfAbsent(v1, k -> new HashMap<>()).merge(v2, 1, Integer::sum);
+            }
+        }
+
+        int total = empleadores.size();
+        List<String> labels = new ArrayList<>(columnas);
+        List<Double> observados = new ArrayList<>();
+        List<Double> esperados = new ArrayList<>();
+
+        for (String c : columnas) {
+            int obsTotal = 0;
+            double espTotal = 0;
+            for (String f : filas) {
+                int obs = matriz.getOrDefault(f, new HashMap<>()).getOrDefault(c, 0);
+                int totalFila = matriz.getOrDefault(f, new HashMap<>()).values().stream().mapToInt(Integer::intValue).sum();
+                int totalCol = matriz.values().stream().mapToInt(m -> m.getOrDefault(c, 0)).sum();
+                double esp = (double) (totalFila * totalCol) / total;
+                obsTotal += obs;
+                espTotal += esp;
+            }
+            observados.add((double) obsTotal);
+            esperados.add(Math.round(espTotal * 100.0) / 100.0);
+        }
+        // Calcular el total general para normalizar a porcentajes
+        double totalGeneral = 0;
+        for (double obs : observados) totalGeneral += obs;
+
+        List<Double> obsPorcentaje = new ArrayList<>();
+        List<Double> espPorcentaje = new ArrayList<>();
+        for (int i = 0; i < observados.size(); i++) {
+            obsPorcentaje.add(totalGeneral > 0 ? Math.round((observados.get(i) / totalGeneral) * 10000.0) / 100.0 : 0.0);
+            espPorcentaje.add(totalGeneral > 0 ? Math.round((esperados.get(i) / totalGeneral) * 10000.0) / 100.0 : 0.0);
+        }
+
+        Map<String, Object> resultado = new HashMap<>();
+        resultado.put("labels", labels);
+        resultado.put("observados", obsPorcentaje);
+        resultado.put("esperados", espPorcentaje);
+        return resultado;
+    }
+    
+        // 29. Datos para el Gráfico de Radar (Titulados)
+    @GetMapping("/radar-titulados")
+    public Map<String, Object> getRadarTitulados(
+            @RequestParam(defaultValue = "GÉNERO") String variable1,
+            @RequestParam(defaultValue = "EN CUÁL DE LAS SIGUIENTES ÁREAS") String variable2) {
+
+        List<Titulado> titulados = tituladoRepository.findAll();
+        
+        Set<String> filas = new TreeSet<>();
+        Set<String> columnas = new TreeSet<>();
+        Map<String, Map<String, Integer>> matriz = new HashMap<>();
+
+        for (Titulado t : titulados) {
+            String v1 = getValor(t, variable1);
+            String v2 = getValor(t, variable2);
+            if (!v1.equals("N/A") && !v2.equals("N/A")) {
+                filas.add(v1);
+                columnas.add(v2);
+                matriz.computeIfAbsent(v1, k -> new HashMap<>()).merge(v2, 1, Integer::sum);
+            }
+        }
+
+        int total = titulados.size();
+        List<String> labels = new ArrayList<>(columnas);
+        List<Double> observados = new ArrayList<>();
+        List<Double> esperados = new ArrayList<>();
+
+        for (String c : columnas) {
+            int obsTotal = 0;
+            double espTotal = 0;
+            for (String f : filas) {
+                int obs = matriz.getOrDefault(f, new HashMap<>()).getOrDefault(c, 0);
+                int totalFila = matriz.getOrDefault(f, new HashMap<>()).values().stream().mapToInt(Integer::intValue).sum();
+                int totalCol = matriz.values().stream().mapToInt(m -> m.getOrDefault(c, 0)).sum();
+                double esp = (double) (totalFila * totalCol) / total;
+                obsTotal += obs;
+                espTotal += esp;
+            }
+            observados.add((double) obsTotal);
+            esperados.add(Math.round(espTotal * 100.0) / 100.0);
+        }
+
+        // Normalizar a porcentajes para el gráfico
+        double totalGeneral = 0;
+        for (double obs : observados) totalGeneral += obs;
+
+        List<Double> obsPorcentaje = new ArrayList<>();
+        List<Double> espPorcentaje = new ArrayList<>();
+        for (int i = 0; i < observados.size(); i++) {
+            obsPorcentaje.add(totalGeneral > 0 ? Math.round((observados.get(i) / totalGeneral) * 10000.0) / 100.0 : 0.0);
+            espPorcentaje.add(totalGeneral > 0 ? Math.round((esperados.get(i) / totalGeneral) * 10000.0) / 100.0 : 0.0);
+        }
+
+        Map<String, Object> resultado = new HashMap<>();
+        resultado.put("labels", labels);
+        resultado.put("observados", obsPorcentaje);
+        resultado.put("esperados", espPorcentaje);
+        return resultado;
+    }
 }

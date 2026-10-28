@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Radar Empleadores - UMSS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans min-h-screen">
+
+    <nav class="bg-blue-900 text-white p-4 shadow-md">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold">Sistema de Análisis (ARCUSUR)</h1>
+            <a href="index.html" class="text-sm hover:underline">Inicio</a>
+        </div>
+    </nav>
+
+    <main class="container mx-auto p-6 max-w-5xl">
+        <h2 class="text-2xl font-bold mb-2">Análisis de Radar - Empleadores</h2>
+        <p class="text-gray-600 mb-6 text-sm">Compara las frecuencias observadas vs. las esperadas para detectar patrones de dependencia.</p>
+
+        <!-- Panel de Selección -->
+        <div class="bg-white p-4 rounded-lg shadow-md mb-6 border-t-4 border-green-500">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                <div>
+                    <label class="block text-sm font-bold mb-1">Variable 1 (Filas):</label>
+                    <select id="var1" class="w-full border rounded p-2">
+                        <option value="TIPO DE ORGANIZACIÓN">Tipo de Organización</option>
+                        <option value="TAMAÑO DE LA ORGANIZACIÓN">Tamaño de la Empresa</option>
+                        <option value="HA CONTRATADO INGENIEROS">¿Contrató en últimos 5 años?</option>
+                        <option value="POSIBILIDAD DE INCORPORAR">Posibilidad de Contratar</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold mb-1">Variable 2 (Columnas):</label>
+                    <select id="var2" class="w-full border rounded p-2">
+                        <option value="NIVEL DE FORMACIÓN ACADÉMICA">Nivel de Formación Demandado</option>
+                        <option value="RUBRO O SECTOR PRINCIPAL">Rubro</option>
+                        <option value="TRAVÉS DE QUÉ MEDIO CONVOCA">Medio de Convocatoria</option>
+                        <option value="QUÉ TIPO DE CARGOS">Cargos Demandados</option>
+                    </select>
+                </div>
+                <div>
+                    <button onclick="actualizarRadar()" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 transition w-full font-bold shadow">
+                        📡 Actualizar Radar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gráfico de Radar -->
+        <div class="bg-white p-6 rounded-lg shadow-md mb-10">
+            <h3 class="font-bold mb-4 text-center text-green-900">Diagrama de Radar: Observado vs Esperado</h3>
+            <div class="relative h-96">
+                <canvas id="radarChart"></canvas>
+            </div>
+            <p class="text-xs text-gray-500 mt-4 text-center">
+                <strong>Interpretación:</strong> Si las líneas azul (Observado) y roja (Esperado) están cerca, confirma la independencia estadística. Si se separan, indica una relación entre las variables.
+            </p>
+        </div>
+    </main>
+
+    <script>
+        Chart.defaults.color = '#111827';
+        Chart.defaults.font.size = 12;
+        let chartRadar;
+
+        function actualizarRadar() {
+            const v1 = document.getElementById('var1').value;
+            const v2 = document.getElementById('var2').value;
+
+            fetch(`/api/analisis/radar-empleadores?variable1=${encodeURIComponent(v1)}&variable2=${encodeURIComponent(v2)}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (chartRadar) chartRadar.destroy();
+
+                    chartRadar = new Chart(document.getElementById('radarChart').getContext('2d'), {
+                        type: 'radar',
+                        data: {
+                            labels: data.labels,
+                                                       datasets: [
+                                {
+                                    label: 'Frecuencia Observada (Real)',
+                                    data: data.observados,
+                                    backgroundColor: 'rgba(59, 130, 246, 0.15)',
+                                    borderColor: 'rgba(59, 130, 246, 1)',
+                                    pointBackgroundColor: 'rgba(59, 130, 246, 1)',
+                                    pointRadius: 5,
+                                    borderWidth: 2
+                                },
+                                {
+                                    label: 'Frecuencia Esperada (H0)',
+                                    data: data.esperados,
+                                    backgroundColor: 'rgba(239, 68, 68, 0.05)',
+                                    borderColor: 'rgba(239, 68, 68, 1)',
+                                    pointBackgroundColor: 'rgba(239, 68, 68, 1)',
+                                    pointRadius: 6,
+                                    borderWidth: 3,
+                                    borderDash: [8, 4], // Línea más punteada
+                                    order: 0 // Se dibuja ENCIMA de la azul
+                                }
+                            ]
+                        },
+                                                options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                r: {
+                                    beginAtZero: true,
+                                    suggestedMax: 50, // Escala máxima para que se vea bien
+                                    ticks: { stepSize: 10 }
+                                }
+                            },
+                            plugins: {
+                                legend: { position: 'bottom' }
+                            }
+                        }
+                    });
+                })
+                .catch(err => console.error("Error cargando radar:", err));
+        }
+
+        document.addEventListener('DOMContentLoaded', actualizarRadar);
+    </script>
+</body>
+</html>

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Análisis de Contingencia Empleadores - UMSS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans min-h-screen">
+
+    <nav class="bg-blue-900 text-white p-4 shadow-md">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold">Sistema de Análisis (ARCUSUR)</h1>
+            <a href="index.html" class="text-sm hover:underline">Inicio</a>
+        </div>
+    </nav>
+
+    <main class="container mx-auto p-6 max-w-6xl">
+        <h2 class="text-2xl font-bold mb-2">Análisis de Contingencia - Empleadores (Paso a Paso)</h2>
+        <p class="text-gray-600 mb-6 text-sm">Procedimiento completo para determinar la independencia entre dos variables cualitativas del sector empleador.</p>
+
+        <!-- Selectores -->
+        <div class="bg-white p-4 rounded-lg shadow-md mb-6 border-t-4 border-green-500">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                <div>
+                    <label class="block text-sm font-bold mb-1">Variable 1 (Filas):</label>
+                    <select id="var1" class="w-full border rounded p-2">
+                        <option value="TIPO DE ORGANIZACIÓN">Tipo de Organización</option>
+                        <option value="TAMAÑO DE LA ORGANIZACIÓN">Tamaño de la Empresa</option>
+                        <option value="HA CONTRATADO INGENIEROS">¿Contrató en últimos 5 años?</option>
+                        <option value="POSIBILIDAD DE INCORPORAR">Posibilidad de Contratar</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold mb-1">Variable 2 (Columnas):</label>
+                    <select id="var2" class="w-full border rounded p-2">
+                        <option value="NIVEL DE FORMACIÓN ACADÉMICA">Nivel de Formación Demandado</option>
+                        <option value="RUBRO O SECTOR PRINCIPAL">Rubro</option>
+                        <option value="TRAVÉS DE QUÉ MEDIO CONVOCA">Medio de Convocatoria</option>
+                        <option value="QUÉ TIPO DE CARGOS">Cargos Demandados</option>
+                    </select>
+                </div>
+                <div>
+                    <button onclick="analizar()" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 transition w-full font-bold shadow">
+                        🔬 Analizar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- PASO 1: FO -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+            <div class="bg-blue-600 text-white px-4 py-2 font-bold">PASO 1: Tabla de Frecuencias Observadas (FO)</div>
+            <div class="p-4 overflow-x-auto">
+                <table class="min-w-full text-sm border">
+                    <thead class="bg-gray-800 text-white"><tr id="headerFO"></tr></thead>
+                    <tbody id="bodyFO"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- PASO 2: FE -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+            <div class="bg-cyan-600 text-white px-4 py-2 font-bold">PASO 2: Tabla de Frecuencias Esperadas (FE)</div>
+            <div class="p-4 overflow-x-auto">
+                <table class="min-w-full text-sm border">
+                    <thead class="bg-gray-800 text-white"><tr id="headerFE"></tr></thead>
+                    <tbody id="bodyFE"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- PASO 3: Chi-Cuadrado -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+            <div class="bg-yellow-500 text-gray-900 px-4 py-2 font-bold">PASO 3: Cálculo del Estadístico Chi-Cuadrado</div>
+            <div class="p-4 overflow-x-auto">
+                <table class="min-w-full text-sm border">
+                    <thead class="bg-gray-800 text-white">
+                        <tr>
+                            <th class="px-2 py-2">Fila</th>
+                            <th class="px-2 py-2">Columna</th>
+                            <th class="px-2 py-2">FO</th>
+                            <th class="px-2 py-2">FE</th>
+                            <th class="px-2 py-2">FO - FE</th>
+                            <th class="px-2 py-2">(FO - FE)²</th>
+                            <th class="px-2 py-2">Contribución</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bodyChi"></tbody>
+                    <tfoot class="bg-gray-200 font-bold">
+                        <tr><td colspan="6" class="px-2 py-2 text-right">Chi-Cuadrado Calculado:</td><td id="chiTotal" class="px-2 py-2 text-center text-blue-700">--</td></tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <!-- PASO 4: Teórico -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+            <div class="bg-purple-600 text-white px-4 py-2 font-bold">PASO 4: Estadístico Teórico y Relación</div>
+            <div class="p-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                <div><p class="text-sm text-gray-600">Grados de Libertad</p><p id="gl" class="text-2xl font-bold text-purple-700">--</p></div>
+                <div><p class="text-sm text-gray-600">Valor Crítico (α=0.05)</p><p id="critico" class="text-2xl font-bold text-purple-700">--</p></div>
+                <div><p class="text-sm text-gray-600">Chi-Cuadrado Calculado</p><p id="chiCalc" class="text-2xl font-bold text-blue-700">--</p></div>
+                <div><p class="text-sm text-gray-600">Relación</p><p id="relacion" class="text-2xl font-bold">--</p></div>
+            </div>
+        </div>
+
+        <!-- PASO 5: Conclusión -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden mb-10">
+            <div class="bg-gray-800 text-white px-4 py-2 font-bold">PASO 5: Conclusión y Recomendación</div>
+            <div class="p-6">
+                <div id="cajaConclusion" class="p-4 rounded text-center font-bold text-lg mb-4"></div>
+                <div id="cajaRecomendacion" class="p-4 rounded text-sm text-justify border"></div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function analizar() {
+            const v1 = document.getElementById('var1').value;
+            const v2 = document.getElementById('var2').value;
+
+            fetch(`/api/analisis/analisis-contingencia-empleadores?variable1=${encodeURIComponent(v1)}&variable2=${encodeURIComponent(v2)}`)
+                .then(res => res.json())
+                .then(data => {
+                    // PASO 1: FO
+                    let headerFO = `<th class="px-2 py-2">Variables</th>`;
+                    data.columnas.forEach(c => headerFO += `<th class="px-2 py-2">${c}</th>`);
+                    headerFO += `<th class="px-2 py-2 bg-gray-600">Total</th>`;
+                    document.getElementById('headerFO').innerHTML = headerFO;
+
+                    let bodyFO = '';
+                    data.filas.forEach(f => {
+                        bodyFO += `<tr><td class="px-2 py-2 font-bold bg-gray-50">${f}</td>`;
+                        data.columnas.forEach(c => {
+                            bodyFO += `<td class="px-2 py-2 text-center">${data.matriz_fo[f][c] || 0}</td>`;
+                        });
+                        bodyFO += `<td class="px-2 py-2 text-center font-bold bg-gray-100">${data.totales_fila[f]}</td></tr>`;
+                    });
+                    bodyFO += `<tr class="bg-gray-200 font-bold"><td class="px-2 py-2">Total</td>`;
+                    data.columnas.forEach(c => bodyFO += `<td class="px-2 py-2 text-center">${data.totales_columna[c]}</td>`);
+                    bodyFO += `<td class="px-2 py-2 text-center">${data.total_general}</td></tr>`;
+                    document.getElementById('bodyFO').innerHTML = bodyFO;
+
+                    // PASO 2: FE
+                    let headerFE = `<th class="px-2 py-2">Variables</th>`;
+                    data.columnas.forEach(c => headerFE += `<th class="px-2 py-2">${c}</th>`);
+                    document.getElementById('headerFE').innerHTML = headerFE;
+
+                    let bodyFE = '';
+                    data.filas.forEach(f => {
+                        bodyFE += `<tr><td class="px-2 py-2 font-bold bg-gray-50">${f}</td>`;
+                        data.columnas.forEach(c => {
+                            bodyFE += `<td class="px-2 py-2 text-center">${data.matriz_fe[f][c]}</td>`;
+                        });
+                        bodyFE += `</tr>`;
+                    });
+                    document.getElementById('bodyFE').innerHTML = bodyFE;
+
+                    // PASO 3: Chi-Cuadrado
+                    let bodyChi = '';
+                    data.pasos_chi.forEach(p => {
+                        bodyChi += `<tr class="border-b hover:bg-gray-50">
+                            <td class="px-2 py-2 font-semibold">${p.fila}</td>
+                            <td class="px-2 py-2">${p.columna}</td>
+                            <td class="px-2 py-2 text-center">${p.fo}</td>
+                            <td class="px-2 py-2 text-center">${p.fe}</td>
+                            <td class="px-2 py-2 text-center">${p.fo_menos_fe}</td>
+                            <td class="px-2 py-2 text-center">${p.cuadrado}</td>
+                            <td class="px-2 py-2 text-center font-bold text-blue-700">${p.contribucion}</td>
+                        </tr>`;
+                    });
+                    document.getElementById('bodyChi').innerHTML = bodyChi;
+                    document.getElementById('chiTotal').innerText = data.chi_calculado;
+
+                    // PASO 4: Teórico
+                    document.getElementById('gl').innerText = data.grados_libertad;
+                    document.getElementById('critico').innerText = data.valor_critico;
+                    document.getElementById('chiCalc').innerText = data.chi_calculado;
+                    document.getElementById('relacion').innerText = data.es_independiente ? "X² < Crítico" : "X² > Crítico";
+                    document.getElementById('relacion').className = data.es_independiente ? "text-2xl font-bold text-green-600" : "text-2xl font-bold text-red-600";
+
+                    // PASO 5: Conclusión
+                    const caja = document.getElementById('cajaConclusion');
+                    caja.innerText = data.conclusion;
+                    caja.className = data.es_independiente 
+                        ? "p-4 rounded text-center font-bold text-lg bg-green-100 text-green-800 border border-green-300" 
+                        : "p-4 rounded text-center font-bold text-lg bg-red-100 text-red-800 border border-red-300";
+
+                    const cajaRec = document.getElementById('cajaRecomendacion');
+                    cajaRec.innerHTML = `<strong>Recomendación:</strong> ${data.recomendacion}`;
+                    cajaRec.className = "p-4 rounded text-sm text-justify bg-blue-50 text-blue-900 border border-blue-300";
+                })
+                .catch(err => console.error("Error:", err));
+        }
+
+        document.addEventListener('DOMContentLoaded', analizar);
+    </script>
+</body>
+</html>

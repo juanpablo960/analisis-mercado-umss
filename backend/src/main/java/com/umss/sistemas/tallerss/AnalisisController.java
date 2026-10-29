@@ -1541,4 +1541,244 @@ public class AnalisisController {
         
         return resultado;
     }
+
+           // 34. Análisis Completo de Contingencia (Paso a Paso)
+    @GetMapping("/analisis-contingencia")
+    public Map<String, Object> getAnalisisContingencia(
+            @RequestParam(defaultValue = "GÉNERO") String variable1,
+            @RequestParam(defaultValue = "EN CUÁL DE LAS SIGUIENTES ÁREAS") String variable2) {
+
+        List<Titulado> titulados = tituladoRepository.findAll();
+        
+        // PASO 1: Agrupar datos cualitativos y contar frecuencias
+        Set<String> filas = new TreeSet<>();
+        Set<String> columnas = new TreeSet<>();
+        Map<String, Map<String, Integer>> matrizFO = new LinkedHashMap<>();
+
+        for (Titulado t : titulados) {
+            String v1 = getValor(t, variable1);
+            String v2 = getValor(t, variable2);
+            
+            // Si el valor está vacío o es N/A, asignar "No especificado"
+            if (v1 == null || v1.trim().isEmpty() || v1.equals("N/A")) v1 = "No especificado";
+            if (v2 == null || v2.trim().isEmpty() || v2.equals("N/A")) v2 = "No especificado";
+            
+            filas.add(v1);
+            columnas.add(v2);
+            matrizFO.computeIfAbsent(v1, k -> new LinkedHashMap<>()).merge(v2, 1, Integer::sum);
+        }
+
+        // Calcular totales
+        int totalGeneral = 0;
+        Map<String, Integer> totalesFila = new LinkedHashMap<>();
+        Map<String, Integer> totalesColumna = new LinkedHashMap<>();
+        
+        for (String f : filas) totalesFila.put(f, 0);
+        for (String c : columnas) totalesColumna.put(c, 0);
+
+        for (String f : filas) {
+            for (String c : columnas) {
+                int val = matrizFO.getOrDefault(f, new LinkedHashMap<>()).getOrDefault(c, 0);
+                totalesFila.merge(f, val, Integer::sum);
+                totalesColumna.merge(c, val, Integer::sum);
+                totalGeneral += val;
+            }
+        }
+
+        // PASO 2: Calcular Frecuencias Esperadas (FE) y Chi-Cuadrado
+        Map<String, Map<String, Double>> matrizFE = new LinkedHashMap<>();
+        double chiCalculado = 0.0;
+        List<Map<String, Object>> pasosChi = new ArrayList<>();
+
+        for (String f : filas) {
+            matrizFE.put(f, new LinkedHashMap<>());
+            for (String c : columnas) {
+                int fo = matrizFO.getOrDefault(f, new LinkedHashMap<>()).getOrDefault(c, 0);
+                int tf = totalesFila.get(f);
+                int tc = totalesColumna.get(c);
+                double fe = (double) (tf * tc) / totalGeneral;
+                matrizFE.get(f).put(c, Math.round(fe * 100.0) / 100.0);
+
+                // Calcular contribución al Chi-Cuadrado
+                if (fe > 0) {
+                    double contribucion = Math.pow(fo - fe, 2) / fe;
+                    chiCalculado += contribucion;
+                    
+                    Map<String, Object> paso = new HashMap<>();
+                    paso.put("fila", f);
+                    paso.put("columna", c);
+                    paso.put("fo", fo);
+                    paso.put("fe", Math.round(fe * 100.0) / 100.0);
+                    paso.put("fo_menos_fe", Math.round((fo - fe) * 100.0) / 100.0);
+                    paso.put("cuadrado", Math.round(Math.pow(fo - fe, 2) * 100.0) / 100.0);
+                    paso.put("contribucion", Math.round(contribucion * 100.0) / 100.0);
+                    pasosChi.add(paso);
+                }
+            }
+        }
+
+        // PASO 3: Calcular grados de libertad y valor crítico
+        int gl = (filas.size() - 1) * (columnas.size() - 1);
+        double valorCritico = 0;
+        if (gl == 1) valorCritico = 3.841;
+        else if (gl == 2) valorCritico = 5.991;
+        else if (gl == 3) valorCritico = 7.815;
+        else if (gl == 4) valorCritico = 9.488;
+        else if (gl == 5) valorCritico = 11.070;
+        else if (gl == 6) valorCritico = 12.592;
+        else if (gl == 8) valorCritico = 15.507;
+        else if (gl == 10) valorCritico = 18.307;
+        else if (gl == 12) valorCritico = 21.026; // <-- Agregado para 12 gl
+        else valorCritico = 25.0;
+
+        // PASO 4: Establecer relación y conclusión
+        boolean esIndependiente = chiCalculado < valorCritico;
+        String conclusion = esIndependiente ? 
+            "Las variables son INDEPENDIENTES. No existe una relación estadísticamente significativa." : 
+            "Las variables NO son independientes. Existe una relación estadísticamente significativa.";
+        
+        String recomendacion = esIndependiente ?
+            "Los datos no muestran evidencia de dependencia. Se recomienda continuar monitoreando estas variables en futuros estudios para confirmar la tendencia." :
+            "Se recomienda investigar las causas de la dependencia encontrada. Esto puede indicar un sesgo o patrón que debe ser considerado en la toma de decisiones académicas.";
+
+        // Empaquetar resultado
+        Map<String, Object> resultado = new HashMap<>();
+        resultado.put("variable1", variable1);
+        resultado.put("variable2", variable2);
+        resultado.put("filas", filas);
+        resultado.put("columnas", columnas);
+        resultado.put("matriz_fo", matrizFO);
+        resultado.put("matriz_fe", matrizFE);
+        resultado.put("totales_fila", totalesFila);
+        resultado.put("totales_columna", totalesColumna);
+        resultado.put("total_general", totalGeneral);
+        resultado.put("pasos_chi", pasosChi);
+        resultado.put("chi_calculado", Math.round(chiCalculado * 100.0) / 100.0);
+        resultado.put("grados_libertad", gl);
+        resultado.put("valor_critico", valorCritico);
+        resultado.put("es_independiente", esIndependiente);
+        resultado.put("conclusion", conclusion);
+        resultado.put("recomendacion", recomendacion);
+
+        return resultado;
+    }
+
+        // 35. Análisis Completo de Contingencia para Empleadores (Paso a Paso)
+    @GetMapping("/analisis-contingencia-empleadores")
+    public Map<String, Object> getAnalisisContingenciaEmpleadores(
+            @RequestParam(defaultValue = "TIPO DE ORGANIZACIÓN") String variable1,
+            @RequestParam(defaultValue = "NIVEL DE FORMACIÓN ACADÉMICA") String variable2) {
+
+        List<Empleador> empleadores = empleadorRepository.findAll();
+        
+        // PASO 1: Agrupar datos cualitativos y contar frecuencias
+        Set<String> filas = new TreeSet<>();
+        Set<String> columnas = new TreeSet<>();
+        Map<String, Map<String, Integer>> matrizFO = new LinkedHashMap<>();
+
+        for (Empleador e : empleadores) {
+            String v1 = getValorEmpleador(e, variable1);
+            String v2 = getValorEmpleador(e, variable2);
+            
+            // Si el valor está vacío o es N/A, asignar "No especificado"
+            if (v1 == null || v1.trim().isEmpty() || v1.equals("N/A")) v1 = "No especificado";
+            if (v2 == null || v2.trim().isEmpty() || v2.equals("N/A")) v2 = "No especificado";
+            
+            filas.add(v1);
+            columnas.add(v2);
+            matrizFO.computeIfAbsent(v1, k -> new LinkedHashMap<>()).merge(v2, 1, Integer::sum);
+        }
+
+        // Calcular totales
+        int totalGeneral = 0;
+        Map<String, Integer> totalesFila = new LinkedHashMap<>();
+        Map<String, Integer> totalesColumna = new LinkedHashMap<>();
+        
+        for (String f : filas) totalesFila.put(f, 0);
+        for (String c : columnas) totalesColumna.put(c, 0);
+
+        for (String f : filas) {
+            for (String c : columnas) {
+                int val = matrizFO.getOrDefault(f, new LinkedHashMap<>()).getOrDefault(c, 0);
+                totalesFila.merge(f, val, Integer::sum);
+                totalesColumna.merge(c, val, Integer::sum);
+                totalGeneral += val;
+            }
+        }
+
+        // PASO 2: Calcular Frecuencias Esperadas (FE) y Chi-Cuadrado
+        Map<String, Map<String, Double>> matrizFE = new LinkedHashMap<>();
+        double chiCalculado = 0.0;
+        List<Map<String, Object>> pasosChi = new ArrayList<>();
+
+        for (String f : filas) {
+            matrizFE.put(f, new LinkedHashMap<>());
+            for (String c : columnas) {
+                int fo = matrizFO.getOrDefault(f, new LinkedHashMap<>()).getOrDefault(c, 0);
+                int tf = totalesFila.get(f);
+                int tc = totalesColumna.get(c);
+                double fe = (double) (tf * tc) / totalGeneral;
+                matrizFE.get(f).put(c, Math.round(fe * 100.0) / 100.0);
+
+                if (fe > 0) {
+                    double contribucion = Math.pow(fo - fe, 2) / fe;
+                    chiCalculado += contribucion;
+                    
+                    Map<String, Object> paso = new HashMap<>();
+                    paso.put("fila", f);
+                    paso.put("columna", c);
+                    paso.put("fo", fo);
+                    paso.put("fe", Math.round(fe * 100.0) / 100.0);
+                    paso.put("fo_menos_fe", Math.round((fo - fe) * 100.0) / 100.0);
+                    paso.put("cuadrado", Math.round(Math.pow(fo - fe, 2) * 100.0) / 100.0);
+                    paso.put("contribucion", Math.round(contribucion * 100.0) / 100.0);
+                    pasosChi.add(paso);
+                }
+            }
+        }
+
+        // PASO 3: Grados de libertad y valor crítico
+        int gl = (filas.size() - 1) * (columnas.size() - 1);
+        double valorCritico = 0;
+        if (gl == 1) valorCritico = 3.841;
+        else if (gl == 2) valorCritico = 5.991;
+        else if (gl == 3) valorCritico = 7.815;
+        else if (gl == 4) valorCritico = 9.488;
+        else if (gl == 5) valorCritico = 11.070;
+        else if (gl == 6) valorCritico = 12.592;
+        else if (gl == 8) valorCritico = 15.507;
+        else if (gl == 10) valorCritico = 18.307;
+        else if (gl == 12) valorCritico = 21.026;
+        else valorCritico = 25.0;
+
+        // PASO 4: Relación y conclusión
+        boolean esIndependiente = chiCalculado < valorCritico;
+        String conclusion = esIndependiente ? 
+            "Las variables son INDEPENDIENTES. No existe una relación estadísticamente significativa." : 
+            "Las variables NO son independientes. Existe una relación estadísticamente significativa.";
+        
+        String recomendacion = esIndependiente ?
+            "Los datos no muestran evidencia de dependencia. Se recomienda continuar monitoreando estas variables en futuros estudios para confirmar la tendencia." :
+            "Se recomienda investigar las causas de la dependencia encontrada. Esto puede indicar un sesgo o patrón que debe ser considerado en la toma de decisiones académicas.";
+
+        Map<String, Object> resultado = new HashMap<>();
+        resultado.put("variable1", variable1);
+        resultado.put("variable2", variable2);
+        resultado.put("filas", filas);
+        resultado.put("columnas", columnas);
+        resultado.put("matriz_fo", matrizFO);
+        resultado.put("matriz_fe", matrizFE);
+        resultado.put("totales_fila", totalesFila);
+        resultado.put("totales_columna", totalesColumna);
+        resultado.put("total_general", totalGeneral);
+        resultado.put("pasos_chi", pasosChi);
+        resultado.put("chi_calculado", Math.round(chiCalculado * 100.0) / 100.0);
+        resultado.put("grados_libertad", gl);
+        resultado.put("valor_critico", valorCritico);
+        resultado.put("es_independiente", esIndependiente);
+        resultado.put("conclusion", conclusion);
+        resultado.put("recomendacion", recomendacion);
+
+        return resultado;
+    }
 }
